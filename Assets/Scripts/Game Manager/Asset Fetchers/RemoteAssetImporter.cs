@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class RemoteAssetImporter : IAssetImporter
 {
+    public string[] ImportAdditionalLabels()
+    {
+        throw new NotImplementedException();
+    }
+
     public Dictionary<string, Sprite> ImportAssets()
     {
         throw new NotImplementedException();

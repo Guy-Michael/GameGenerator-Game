@@ -4,6 +4,12 @@ using UnityEngine;
 public class MockAssetImporter : MonoBehaviour, IAssetImporter
 {
     [SerializeField] Sprite testSprite;
+
+    public string[] ImportAdditionalLabels()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public Dictionary<string, Sprite> ImportAssets()
     {
         Dictionary<string, Sprite> dict = new();
