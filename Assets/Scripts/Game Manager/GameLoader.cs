@@ -9,13 +9,14 @@ public class GameLoader : MonoBehaviour
     [SerializeField] TileManager gameBoard;
     [SerializeField] LabelManager labelBoard;
 
-    public void Init(IAssetImporter assetImporter)
+    public void InitializeGameGraphics(IAssetImporter assetImporter)
     {
         this.assetImporter = assetImporter;
-        Dictionary<string, Sprite> assets = assetImporter.ImportAssets();
+        Dictionary<string, Sprite> assets = assetImporter.ImportTiles();
+        Dictionary<Player, Sprite> winThumbnails = assetImporter.ImportWinThumbnails();
         string[] additionalData = assetImporter.ImportAdditionalLabels();
 
-        gameBoard.Init(assets.Values.ToArray());
+        gameBoard.LoadSprites(assets.Values.ToArray(), winThumbnails);
         labelBoard.init(assets.Keys.ToArray(), additionalData);
     }
 }

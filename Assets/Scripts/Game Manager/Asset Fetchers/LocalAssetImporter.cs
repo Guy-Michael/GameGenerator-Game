@@ -7,13 +7,13 @@ public class LocalAssetImporter : MonoBehaviour, IAssetImporter
 {
     public string[] ImportAdditionalLabels()
     {
-        TextAsset additionalCountriesJson = (TextAsset) Resources.Load("Text/AdditionalCountries.json", typeof(string));
-        // string[] additionalCountries = JsonConvert.DeserializeObject<string[]>(additionalCountriesJson.text);
-        // return additionalCountries;
-        return new string[]{"country1", "country2", "country3"};
+        TextAsset asset = Resources.Load<TextAsset>("Text/AdditionalCountries");
+        string[] additionalCountries = JsonConvert.DeserializeObject<string[]>(asset.text);
+
+        return additionalCountries;
     }
 
-    public Dictionary<string, Sprite> ImportAssets()
+    public Dictionary<string, Sprite> ImportTiles()
     {
         Sprite[] countrySprites = Resources.LoadAll("Graphics/Countries", typeof(Sprite)).Cast<Sprite>().ToArray();
         Dictionary<string, Sprite> sprites = new();
@@ -25,5 +25,14 @@ public class LocalAssetImporter : MonoBehaviour, IAssetImporter
         }
 
         return sprites;
+    }
+
+    public Dictionary<Player, Sprite> ImportWinThumbnails()
+    {
+        Dictionary<Player, Sprite> winThumbnails = new();
+        winThumbnails.Add(Player.Player1, Resources.Load<Sprite>("Graphics/Win Thumbnails/Alien"));
+        winThumbnails.Add(Player.Player2, Resources.Load<Sprite>("Graphics/Win Thumbnails/Astronaut"));
+
+        return winThumbnails;
     }
 }

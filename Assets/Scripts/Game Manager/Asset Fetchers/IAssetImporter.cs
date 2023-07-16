@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public interface IAssetImporter
 {
-    public Dictionary<string, Sprite> ImportAssets();
+    public Dictionary<string, Sprite> ImportTiles();
+    public Dictionary<Player, Sprite> ImportWinThumbnails();
     public string[] ImportAdditionalLabels();
 }

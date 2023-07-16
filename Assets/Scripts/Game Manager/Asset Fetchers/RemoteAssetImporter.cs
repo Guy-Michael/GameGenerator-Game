@@ -9,7 +9,12 @@ public class RemoteAssetImporter : IAssetImporter
         throw new NotImplementedException();
     }
 
-    public Dictionary<string, Sprite> ImportAssets()
+    public Dictionary<string, Sprite> ImportTiles()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Dictionary<Player, Sprite> ImportWinThumbnails()
     {
         throw new NotImplementedException();
     }

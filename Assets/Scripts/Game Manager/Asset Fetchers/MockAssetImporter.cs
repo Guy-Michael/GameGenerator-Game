@@ -10,7 +10,7 @@ public class MockAssetImporter : MonoBehaviour, IAssetImporter
         throw new System.NotImplementedException();
     }
 
-    public Dictionary<string, Sprite> ImportAssets()
+    public Dictionary<string, Sprite> ImportTiles()
     {
         Dictionary<string, Sprite> dict = new();
 
@@ -21,5 +21,10 @@ public class MockAssetImporter : MonoBehaviour, IAssetImporter
         }
 
         return dict;
+    }
+
+    public Dictionary<Player, Sprite> ImportWinThumbnails()
+    {
+        throw new System.NotImplementedException();
     }
 }
