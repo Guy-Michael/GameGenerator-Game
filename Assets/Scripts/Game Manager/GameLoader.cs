@@ -17,6 +17,6 @@ public class GameLoader : MonoBehaviour
         string[] additionalData = assetImporter.ImportAdditionalLabels();
 
         gameBoard.LoadSprites(assets.Values.ToArray(), winThumbnails);
-        labelBoard.init(assets.Keys.ToArray(), additionalData);
+        labelBoard.LoadContent(assets.Keys.ToArray(), additionalData);
     }
 }

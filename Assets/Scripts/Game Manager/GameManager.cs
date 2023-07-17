@@ -11,18 +11,16 @@ public enum Player
 
 public class GameManager : MonoBehaviour
 {
-    GameLoader loader;
+    GameLoader contentLoader;
     TileManager gameBoard;
     LabelManager words;
     Player currentPlayer;
     Dictionary<Player, List<int>> movesMade;
-    List<int> player1Tiles;
-    List<int> player2Tiles;
+    int lastSelectedTileIndex;
+    int lastSelectedLabelIndex;
+
     void Start()
     {
-        loader = GetComponent<GameLoader>();
-        IAssetImporter importer = GetComponent<LocalAssetImporter>();
-        loader.InitializeGameGraphics(importer);
 
         //This should be randomized.
         currentPlayer = Player.Player1;
@@ -31,28 +29,83 @@ public class GameManager : MonoBehaviour
         movesMade.Add(Player.Player1, new List<int>());
         movesMade.Add(Player.Player2, new List<int>());
 
+        lastSelectedLabelIndex = -1;
+        lastSelectedTileIndex = -1;
+
         //BAD WAY TO SEARCH, SHOULD CHANGE. MAYBE USE SERIALIZED FIELDS
         gameBoard = GameObject.Find("Tiles").GetComponent<TileManager>();
-        words = GameObject.Find("Labels").GetComponent<LabelManager>();
-
         gameBoard.InitTiles(OnTileClick);
+        
+        words = GameObject.Find("Labels").GetComponent<LabelManager>();
+        words.Init(OnLabelClick);
 
+        
+
+        contentLoader = GetComponent<GameLoader>();
+        IAssetImporter importer = GetComponent<LocalAssetImporter>();
+        contentLoader.InitializeGameGraphics(importer);
+    }
+
+
+    void CheckIfMovePerformedCorrect(int tileIndex, int labelIndex)
+    {
 
     }
+
 
     void OnTileClick(int tileIndex)
     {
-        movesMade[currentPlayer].Add(tileIndex);
-        CheckForWin();
+        if(lastSelectedTileIndex != -1)
+        {
+            gameBoard[lastSelectedTileIndex].SetBorderColorSelected(false);
+        }
 
-        gameBoard[tileIndex].SetPlayerThumbnail(currentPlayer);
-        currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
+        lastSelectedTileIndex = tileIndex;
+        CheckForMatch();
     }
 
-    void CheckForWin()
+    void OnLabelClick(int labelIndex)
     {
-
+        if(lastSelectedLabelIndex != -1)
+        {
+            words[lastSelectedLabelIndex].SetLabelSelected(false);
+        }
+        lastSelectedLabelIndex = labelIndex;
+        CheckForMatch();
     }
 
-    
+    void CheckForMatch()
+    {
+        if(lastSelectedLabelIndex == -1 || lastSelectedTileIndex == -1)
+        {
+            print("not both are selected yet");
+            return;
+        } 
+
+        string labelText = words[lastSelectedLabelIndex].Content;
+        string tileSpriteName = gameBoard[lastSelectedTileIndex].SpriteName;
+
+        if(labelText.Equals(tileSpriteName))
+        {
+            print("A match!");
+            gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
+            movesMade[currentPlayer].Add(lastSelectedTileIndex);
+            gameBoard.DisableTile(lastSelectedTileIndex);
+            words.DisableLabel(lastSelectedLabelIndex);
+        }
+
+        else
+        {
+            print("A miss!");
+        }
+
+        words[lastSelectedLabelIndex].SetLabelSelected(false);
+        gameBoard[lastSelectedTileIndex].SetBorderColorSelected(false);
+
+
+        lastSelectedLabelIndex = -1;
+        lastSelectedTileIndex = -1;
+
+        currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
+    }   
 }

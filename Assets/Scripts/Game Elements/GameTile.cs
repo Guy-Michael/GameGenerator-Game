@@ -12,40 +12,40 @@ public class GameTile : MonoBehaviour
     Image image;
     Button button;
     int index;
+
+    public string SpriteName {get => image.sprite.name;}
     public void LoadSprites(Sprite initialSprite, Dictionary<Player, Sprite> winSprites)
     {
         this.sprite = initialSprite;
 
         image = transform.Find("Image").GetComponent<Image>();
+        image.sprite = this.sprite;
         this.winSprites = winSprites;
     }
 
-    public void Init(Action<int> onClickCallback)
+    public void Init(int index, Action<int> onClickCallback)
     {
+        this.index = index;
+
         button = transform.Find("Image").GetComponent<Button>();
-
-        InitIndex();
-
-        button.onClick.AddListener(ChangeBorderColorToSelected);
+        button.onClick.AddListener(() => SetBorderColorSelected(true));
         button.onClick.AddListener(() => onClickCallback(index));
-        image.sprite = this.sprite;
 
     }
 
-    private void InitIndex()
-    {
-        string indexPortionOfName = gameObject.name.Split(" ")[1];
-        index = int.Parse(indexPortionOfName);
-    }
-
-    private void ChangeBorderColorToSelected()
+    public void SetBorderColorSelected(bool isSelected)
     {
         Image border = transform.Find("Border").GetComponent<Image>();
-        border.color = Color.magenta;
+        border.color = isSelected ? Color.magenta : Color.black;
     }
 
     public void SetPlayerThumbnail(Player player)
     {
         image.sprite = winSprites[player];
+    }
+
+    public void Disable()
+    {
+        button.interactable = false;
     }
 }

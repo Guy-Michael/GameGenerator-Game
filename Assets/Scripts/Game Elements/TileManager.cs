@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class TileManager : MonoBehaviour
 {
@@ -10,15 +11,15 @@ public class TileManager : MonoBehaviour
     {
         gameTiles = GetComponentsInChildren<GameTile>();
 
-        foreach (GameTile tile in gameTiles)
+        for(int i = 0; i < gameTiles.Length; i++)
         {
-            tile.Init(onClickCallback);
+            gameTiles[i].Init(i, onClickCallback);
         }
     }
 
     public GameTile this[int index]
     {
-        get => gameTiles[index - 1];
+        get => gameTiles[index];
     }
 
     public void LoadSprites(Sprite[] sprites, Dictionary<Player, Sprite> winSprites)
@@ -32,6 +33,11 @@ public class TileManager : MonoBehaviour
         {
             gameTiles[i].LoadSprites(sprites[i], winSprites);    
         }
+    }
+
+    public void DisableTile(int index)
+    {
+        this[index].Disable();
     }
 
 }
