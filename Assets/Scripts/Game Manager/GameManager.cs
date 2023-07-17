@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -103,6 +104,7 @@ public class GameManager : MonoBehaviour
         movesMade[currentPlayer].Add(lastSelectedTileIndex);
         gameBoard.DisableTile(lastSelectedTileIndex);
         words.DisableLabel(lastSelectedLabelIndex);
+        CheckForCurrentPlayerWin();
     }
 
     private void OnTurnEnded()
@@ -114,5 +116,41 @@ public class GameManager : MonoBehaviour
 
         lastSelectedLabelIndex = -1;
         lastSelectedTileIndex = -1;
+    }
+
+    private void CheckForCurrentPlayerWin()
+    {
+        (int a, int b, int c) winningTriplet = (-1, -1, -1);
+        List<int> currentPlayerMoves = movesMade[currentPlayer];
+        foreach((int a, int b, int c) triplet in GetWinningTriplets())
+        {
+            if(currentPlayerMoves.Contains(triplet.a) &&
+                currentPlayerMoves.Contains(triplet.b) &&
+                currentPlayerMoves.Contains(triplet.c))
+                {
+                    print("wonnnnnnnnnnnnn");
+                    Vector2 position1 = gameBoard[triplet.a].GetComponent<RectTransform>().anchoredPosition;
+                    Vector2 position2 = gameBoard[triplet.c].GetComponent<RectTransform>().anchoredPosition;
+
+                    Debug.DrawLine(position1, position2, Color.red, 5f);
+                }
+        }
+    }
+
+    private (int, int, int)[] GetWinningTriplets()
+    {
+        (int a, int b, int c)[] winningTriplets = new (int, int, int)[]
+        {
+            (0, 1, 2), //Top Row
+            (3, 4, 5), // Middle Row
+            (6, 7, 8), // Bottom Row
+            (0, 3, 6), // Left Column
+            (1, 4, 7), // Middle Column
+            (2, 5, 8), // Right Column
+            (0, 4, 8), // Main Diagonal
+            (2, 4, 6) // Sub Diagonal
+        };
+
+        return winningTriplets;
     }
 }
