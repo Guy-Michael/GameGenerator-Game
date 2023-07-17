@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TimerInstance : MonoBehaviour
 {
-    bool started;
+    bool active;
 	float timeStarted;
 	float timerDuration;
 	float timeElapsed;
@@ -14,18 +14,23 @@ public class TimerInstance : MonoBehaviour
 
     private void Update()
 	{
-		if (!started)
+		if (!active)
             return;
 
 		TickTime();
 	}
 
-	public void Fire(float duration, Action action)
+	public void Fire(float duration)
 	{
-		started = true;
+		active = true;
 		this.timerDuration = duration;
 		this.timeStarted = Time.realtimeSinceStartup;
 		this.timeElapsed = 0;
+	}
+
+	public void Fire(float duration, Action action)
+	{
+		Fire(duration);
 		this.action = action;
 	}
 
@@ -37,13 +42,14 @@ public class TimerInstance : MonoBehaviour
             return;
 		}
 
-        started = false;
-        action.Invoke();
+        active = false;
+        action?.Invoke();
         Destroy(this);
 	}
 
 	public void StopAndKill()
 	{
+		active = false;
 		Destroy(this);
 	}
 

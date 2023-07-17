@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     LabelManager words;
     Player currentPlayer;
     Dictionary<Player, List<int>> movesMade;
+    SpaceshipHandler spaceship;
     int lastSelectedTileIndex;
     int lastSelectedLabelIndex;
 
@@ -39,19 +40,18 @@ public class GameManager : MonoBehaviour
         words = GameObject.Find("Labels").GetComponent<LabelManager>();
         words.Init(OnLabelClick);
 
-        
+        spaceship = GameObject.Find("Spaceship").GetComponent<SpaceshipHandler>();
 
         contentLoader = GetComponent<GameLoader>();
         IAssetImporter importer = GetComponent<LocalAssetImporter>();
         contentLoader.InitializeGameGraphics(importer);
+
+
+        GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
+        GameEvents.TurnEnded.AddListener(OnTurnEnded);
+
+        GameEvents.GameStarted.Invoke();
     }
-
-
-    void CheckIfMovePerformedCorrect(int tileIndex, int labelIndex)
-    {
-
-    }
-
 
     void OnTileClick(int tileIndex)
     {
@@ -78,7 +78,6 @@ public class GameManager : MonoBehaviour
     {
         if(lastSelectedLabelIndex == -1 || lastSelectedTileIndex == -1)
         {
-            print("not both are selected yet");
             return;
         } 
 
@@ -87,25 +86,33 @@ public class GameManager : MonoBehaviour
 
         if(labelText.Equals(tileSpriteName))
         {
-            print("A match!");
-            gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
-            movesMade[currentPlayer].Add(lastSelectedTileIndex);
-            gameBoard.DisableTile(lastSelectedTileIndex);
-            words.DisableLabel(lastSelectedLabelIndex);
+            GameEvents.PlayerGotMatch.Invoke();
         }
 
         else
         {
-            print("A miss!");
+            GameEvents.PlayerFailedMatch.Invoke();
         }
 
-        words[lastSelectedLabelIndex].SetLabelSelected(false);
-        gameBoard[lastSelectedTileIndex].SetBorderColorSelected(false);
+        GameEvents.TurnEnded.Invoke();
+    }
+
+    private void OnPlayerGotMatch()
+    {
+        gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
+        movesMade[currentPlayer].Add(lastSelectedTileIndex);
+        gameBoard.DisableTile(lastSelectedTileIndex);
+        words.DisableLabel(lastSelectedLabelIndex);
+    }
+
+    private void OnTurnEnded()
+    {
+        currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
+        words[lastSelectedLabelIndex]?.SetLabelSelected(false);
+        gameBoard[lastSelectedTileIndex]?.SetBorderColorSelected(false);
 
 
         lastSelectedLabelIndex = -1;
         lastSelectedTileIndex = -1;
-
-        currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
-    }   
+    }
 }

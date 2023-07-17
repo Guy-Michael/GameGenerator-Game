@@ -22,7 +22,12 @@ public class Timer : MonoBehaviour
 		return timerContainer.AddComponent<TimerInstance>();
 	}
 
-
+	public static TimerInstance Fire(float duration)
+	{
+		TimerInstance timer = getTimerInstance();
+		timer.Fire(duration);
+		return timer;
+	}
 	public static TimerInstance Fire(float duration, Action action)
 	{
 		TimerInstance timer = getTimerInstance();

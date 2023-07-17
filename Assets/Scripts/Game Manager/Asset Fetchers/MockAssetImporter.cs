@@ -5,6 +5,11 @@ public class MockAssetImporter : MonoBehaviour, IAssetImporter
 {
     [SerializeField] Sprite testSprite;
 
+    public string[] GetGameCodes()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public string[] ImportAdditionalLabels()
     {
         throw new System.NotImplementedException();

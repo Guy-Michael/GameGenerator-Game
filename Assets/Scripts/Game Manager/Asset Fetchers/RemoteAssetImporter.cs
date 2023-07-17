@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class RemoteAssetImporter : IAssetImporter
 {
+    public string[] GetGameCodes()
+    {
+        throw new NotImplementedException();
+    }
+
     public string[] ImportAdditionalLabels()
     {
         throw new NotImplementedException();

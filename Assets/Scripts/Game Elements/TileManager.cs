@@ -19,7 +19,7 @@ public class TileManager : MonoBehaviour
 
     public GameTile this[int index]
     {
-        get => gameTiles[index];
+        get => (index >= 0) && index < gameTiles.Length ? gameTiles[index] : null; //throw new IndexOutOfRangeException($"There are {gameTiles.Length} tile indices but index {index} was accessed.");
     }
 
     public void LoadSprites(Sprite[] sprites, Dictionary<Player, Sprite> winSprites)

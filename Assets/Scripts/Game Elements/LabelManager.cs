@@ -11,7 +11,7 @@ public class LabelManager : MonoBehaviour
 
     public GameLabel this[int index]
     {
-        get => gameLabels[index];
+        get => (index >= 0) && index < gameLabels.Length ? gameLabels[index] : null;// throw new IndexOutOfRangeException($"There are {gameLabels.Length} label indices but index {index} was accessed.");
     }
 
     //Initializes functionality.

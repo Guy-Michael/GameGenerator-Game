@@ -11,7 +11,7 @@ public class GameLabel : MonoBehaviour
     TextMeshProUGUI text;
     int index;
 
-    public string Content{get => text?.text;}
+    public string Content { get => text?.text; }
 
     public void Init(int index, Action<int> onLabelClick)
     {

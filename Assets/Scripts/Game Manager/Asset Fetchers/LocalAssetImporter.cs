@@ -5,6 +5,11 @@ using Newtonsoft.Json;
 
 public class LocalAssetImporter : MonoBehaviour, IAssetImporter
 {
+    public string[] GetGameCodes()
+    {
+        return new string[] {"101", "102"};
+    }
+
     public string[] ImportAdditionalLabels()
     {
         TextAsset asset = Resources.Load<TextAsset>("Text/AdditionalCountries");
