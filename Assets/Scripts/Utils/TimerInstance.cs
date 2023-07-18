@@ -8,7 +8,7 @@ public class TimerInstance : MonoBehaviour
     bool active;
 	float timeStarted;
 	float timerDuration;
-	float timeElapsed;
+	public float timeElapsed;
 	Action action;
 	public float RemainingTime {get => timerDuration - timeElapsed;}
 

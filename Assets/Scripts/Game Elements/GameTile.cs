@@ -8,7 +8,7 @@ using UnityEngine.Events;
 public class GameTile : MonoBehaviour
 {
     Dictionary<Player, Sprite> winSprites;
-    Sprite sprite;
+    public Sprite sprite {get; private set;}
     Image image;
     Button button;
     int index;
