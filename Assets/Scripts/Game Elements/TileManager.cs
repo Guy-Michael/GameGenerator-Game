@@ -35,6 +35,14 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    public void ResetAll()
+    {
+        foreach(GameTile tile in gameTiles)
+        {
+            tile.Reset();
+        }
+    }
+
     public void DisableTile(int index)
     {
         this[index].Disable();

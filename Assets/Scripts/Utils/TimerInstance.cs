@@ -47,6 +47,16 @@ public class TimerInstance : MonoBehaviour
         Destroy(this);
 	}
 
+	public void Pause()
+	{
+		active = false;
+	}
+
+	public void Resume()
+	{
+		active = true;
+	}
+
 	public void StopAndKill()
 	{
 		active = false;
