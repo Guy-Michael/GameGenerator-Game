@@ -44,6 +44,13 @@ public class GameTile : MonoBehaviour
         image.sprite = winSprites[player];
     }
 
+    public void Reset()
+    {
+        SetBorderColorSelected(false);
+        image.sprite = sprite;
+        button.interactable = true;
+    }
+
     public void Disable()
     {
         button.interactable = false;

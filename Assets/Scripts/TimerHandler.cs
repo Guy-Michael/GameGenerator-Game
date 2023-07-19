@@ -43,6 +43,16 @@ public class TimerHandler : MonoBehaviour
         StartTimer();
     }
 
+    public void PauseTimer()
+    {
+        timer?.Pause();
+    }
+
+    public void ResumeTimer()
+    {
+        timer?.Resume();
+    }
+
     private void InvokeTurnEndedEvent()
     {
         GameEvents.TurnEnded.Invoke();

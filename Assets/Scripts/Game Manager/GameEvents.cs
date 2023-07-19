@@ -7,5 +7,7 @@ public static class GameEvents
     public static UnityEvent TurnEnded = new();
     public static UnityEvent GameStarted = new();
     public static UnityEvent<string> GameTypeSelected = new();
-    internal static UnityEvent GameWon = new();
+    public static UnityEvent RoundEnded = new();
+    public static UnityEvent SetWon = new();
+    public static UnityEvent GameWon = new();
 }

@@ -34,6 +34,11 @@ public class GameLabel : MonoBehaviour
         image.color = isSelected ? Color.magenta : Color.white;
     }
 
+    public void Reset()
+    {
+        button.interactable = true;
+    }
+    
     public void Disable()
     {
         button.interactable = false;

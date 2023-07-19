@@ -44,6 +44,14 @@ public class LabelManager : MonoBehaviour
         }
     }
 
+    public void ResetAll()
+    {
+        foreach(GameLabel label in gameLabels)
+        {
+            label.Reset();
+        }
+    }
+
     public void DisableLabel(int index)
     {
         this[index].Disable();
