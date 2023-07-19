@@ -17,15 +17,17 @@ public class EndScreenMatch : MonoBehaviour
         image = transform.Find("Image").GetComponent<Image>();
         image.sprite = sprite;
 
-        caption = transform.Find("Caption").GetComponent<TextMeshProUGUI>();
+        caption = transform.Find("Caption").GetComponentInChildren<TextMeshProUGUI>();
         caption.text = text;
 
         isCorrect = correct;
+        ChangeBorderColorByMatchCorrectness();
+
 
         border = transform.Find("Border").GetComponent<Image>();
     }
 
-    void OnValidate()
+    private void ChangeBorderColorByMatchCorrectness()
     {
         if(border == null)
         {
