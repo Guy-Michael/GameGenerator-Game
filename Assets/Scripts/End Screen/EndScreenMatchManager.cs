@@ -4,18 +4,15 @@ using UnityEngine;
 
 public class EndScreenMatchManager : MonoBehaviour
 {
-    [SerializeField] Player player;
     [SerializeField] EndScreenMatch matchPrefab;
     [SerializeField] Transform matchContainer;
 
-    void Start()
+    public void Init(List<(Sprite sprite, string caption, bool isCorrect)> matchList)
     {
-        var list = AnalyticsManager.analytics[player].moves;
-        foreach(var item in list)
+        foreach((Sprite sprite, string caption, bool isCorrect) item in matchList)
         {
             EndScreenMatch match = Instantiate(matchPrefab, matchContainer);
-            print("is match null? : " + match == null);
-            match.Init(item.sprite, item.Caption, item.isCorrect);
+            match.Init(item.sprite, item.caption, item.isCorrect);
         }
     }
 }
