@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,9 @@ public class GameManager : MonoBehaviour
     GameLoader contentLoader;
     TileManager gameBoard;
     LabelManager words;
-    Player currentPlayer;
+    public static Player currentPlayer;
     Dictionary<Player, List<int>> movesMade;
+    public static Dictionary<Player, (Sprite sprite, string caption, bool isCorrect)> analyticsMoveRecords;
     SpaceshipHandler spaceship;
     int lastSelectedTileIndex;
     int lastSelectedLabelIndex;
@@ -49,10 +51,14 @@ public class GameManager : MonoBehaviour
 
 
         GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
+        GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
         GameEvents.TurnEnded.AddListener(OnTurnEnded);
+        GameEvents.GameWon.AddListener(OnGameWon);
 
         GameEvents.GameStarted.Invoke();
     }
+
+    
 
     void OnTileClick(int tileIndex)
     {
@@ -82,11 +88,16 @@ public class GameManager : MonoBehaviour
             return;
         } 
 
+
         string labelText = words[lastSelectedLabelIndex].Content;
         string tileSpriteName = gameBoard[lastSelectedTileIndex].SpriteName;
 
+
+        //Capture sprite and caption for anlytics.
+        bool isMoveCorrect = false;
         if(labelText.Equals(tileSpriteName))
         {
+            isMoveCorrect = true;
             GameEvents.PlayerGotMatch.Invoke();
         }
 
@@ -95,6 +106,10 @@ public class GameManager : MonoBehaviour
             GameEvents.PlayerFailedMatch.Invoke();
         }
 
+
+        //Move RecordMove to analytics manager!
+        AnalyticsManager.RecordMove(currentPlayer, labelText, gameBoard[lastSelectedTileIndex].sprite, isMoveCorrect);
+        AnalyticsManager.IncrementPlaytime(currentPlayer);
         GameEvents.TurnEnded.Invoke();
     }
 
@@ -104,11 +119,23 @@ public class GameManager : MonoBehaviour
         movesMade[currentPlayer].Add(lastSelectedTileIndex);
         gameBoard.DisableTile(lastSelectedTileIndex);
         words.DisableLabel(lastSelectedLabelIndex);
-        CheckForCurrentPlayerWin();
+        
+        AnalyticsManager.IncrementScore(currentPlayer);
+
+        if(CheckForCurrentPlayerWin())
+        {
+            GameEvents.GameWon.Invoke();
+        }
+    }
+
+    private void OnPlayerFailedMatch()
+    {
+        AnalyticsManager.IncrementNumberOfMistakes(currentPlayer);
     }
 
     private void OnTurnEnded()
     {
+
         currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
         words[lastSelectedLabelIndex]?.SetLabelSelected(false);
         gameBoard[lastSelectedTileIndex]?.SetBorderColorSelected(false);
@@ -118,9 +145,8 @@ public class GameManager : MonoBehaviour
         lastSelectedTileIndex = -1;
     }
 
-    private void CheckForCurrentPlayerWin()
+    private bool CheckForCurrentPlayerWin()
     {
-        (int a, int b, int c) winningTriplet = (-1, -1, -1);
         List<int> currentPlayerMoves = movesMade[currentPlayer];
         foreach((int a, int b, int c) triplet in GetWinningTriplets())
         {
@@ -128,13 +154,16 @@ public class GameManager : MonoBehaviour
                 currentPlayerMoves.Contains(triplet.b) &&
                 currentPlayerMoves.Contains(triplet.c))
                 {
-                    print("wonnnnnnnnnnnnn");
-                    Vector2 position1 = gameBoard[triplet.a].GetComponent<RectTransform>().anchoredPosition;
-                    Vector2 position2 = gameBoard[triplet.c].GetComponent<RectTransform>().anchoredPosition;
-
-                    Debug.DrawLine(position1, position2, Color.red, 5f);
+                    return true;
                 }
         }
+
+        return false;
+    }
+
+    private void OnGameWon()
+    {
+        SceneTransitionManager.MoveToNextScene();
     }
 
     private (int, int, int)[] GetWinningTriplets()

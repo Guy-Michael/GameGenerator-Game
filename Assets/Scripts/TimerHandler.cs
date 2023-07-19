@@ -10,12 +10,19 @@ public class TimerHandler : MonoBehaviour
     TimerInstance timer;
     TextMeshProUGUI text;
     
+
+
     void Awake()
     {
-        GameEvents.GameStarted.AddListener(RestartTimer);
+        GameEvents.GameStarted.AddListener(StartTimer);
         GameEvents.TurnEnded.AddListener(RestartTimer);
 
-        text = GetComponentInChildren<TextMeshProUGUI>();
+        text = transform.parent.GetComponentInChildren<TextMeshProUGUI>();
+    }
+
+    public float GetElapsedTime()
+    {
+        return timer.timeElapsed;
     }
 
     void Update()
@@ -26,10 +33,14 @@ public class TimerHandler : MonoBehaviour
         text.text = remainingTime;
     }
 
+    private void StartTimer()
+    {
+        timer = Timer.Fire(timerDuration, InvokeTurnEndedEvent);
+    }
     private void RestartTimer()
     {
         timer?.StopAndKill();
-        timer = Timer.Fire(timerDuration, InvokeTurnEndedEvent);
+        StartTimer();
     }
 
     private void InvokeTurnEndedEvent()
