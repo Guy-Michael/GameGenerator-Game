@@ -34,7 +34,7 @@ public class ScoreIndicatorManager : MonoBehaviour
         setIndicators = new();
         foreach(Transform child in transform.Find("Set Indicators").transform)
         {
-            setIndicators.Add(child.GetComponent<Image>());
+            setIndicators.Add(child.transform.Find("Image").GetComponent<Image>());
         }
     }
 
@@ -54,8 +54,13 @@ public class ScoreIndicatorManager : MonoBehaviour
 
     private void WinSet(Player player)
     {
-        setIndicators[currentSet++].sprite = setSprites[player];
-        
+        setIndicators[currentSet].sprite = setSprites[player];
+        Color color = setIndicators[currentSet].color;
+        color.a = 255;
+        setIndicators[currentSet].color = color;
+
+        currentSet++;
+
         if(currentSet > 2)
         {
             InvokeGameWonEvent();

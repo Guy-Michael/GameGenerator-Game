@@ -167,7 +167,7 @@ public class GameManager : MonoBehaviour
         LineRenderer line = DrawLineRendererOnWinningTriplet();
         timerHandler.PauseTimer();
         
-        Timer.Fire(3f, () => 
+        Timer.Fire(2f, () => 
         {
             timerHandler.ResumeTimer();
             GameEvents.TurnEnded.Invoke();
@@ -234,7 +234,6 @@ public class GameManager : MonoBehaviour
     private bool CheckForCurrentPlayerWin()
     {
         List<int> currentPlayerMoves = movesMade[currentPlayer];
-        print(currentPlayerMoves.Count);
         foreach((int a, int b, int c) triplet in GetWinningTriplets())
         {
             if(currentPlayerMoves.Contains(triplet.a) &&
