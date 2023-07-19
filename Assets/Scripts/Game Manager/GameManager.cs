@@ -108,14 +108,9 @@ public class GameManager : MonoBehaviour
 
 
         //Move RecordMove to analytics manager!
-        RecordMove(currentPlayer, labelText, gameBoard[lastSelectedTileIndex].sprite, isMoveCorrect);
+        AnalyticsManager.RecordMove(currentPlayer, labelText, gameBoard[lastSelectedTileIndex].sprite, isMoveCorrect);
         AnalyticsManager.IncrementPlaytime(currentPlayer);
         GameEvents.TurnEnded.Invoke();
-    }
-
-    private void RecordMove(Player player, string caption, Sprite sprite, bool isMoveCorrect)
-    {
-        // analyticsMoveRecords.Add(player, (sprite, caption, isMoveCorrect));
     }
 
     private void OnPlayerGotMatch()

@@ -25,7 +25,7 @@ public static class AnalyticsManager
         analytics.Add(Player.Player1, temp);
         analytics.Add(Player.Player2, temp);
 
-        timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
+        timerHandler = GameObject.Find("Timer")?.GetComponent<TimerHandler>();
 
     }
 
@@ -53,6 +53,13 @@ public static class AnalyticsManager
     public static void UpdateName(Player player)
     {
 
+    }
+
+    public static void RecordMove(Player player, string caption, Sprite sprite, bool isMoveCorrect)
+    {
+        analytics[player].moves.Add((sprite, caption, isMoveCorrect));
+
+        Debug.Log("Recorded move for " + player + ": " + $" name: {caption}, sprite: {sprite.name}, is correct? {isMoveCorrect}");
     }
 
 

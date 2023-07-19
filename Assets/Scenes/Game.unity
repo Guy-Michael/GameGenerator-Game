@@ -2672,7 +2672,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1665974606}
   - component: {fileID: 1665974607}
-  - component: {fileID: 1665974608}
   m_Layer: 5
   m_Name: Spaceship & Timer Container
   m_TagString: Untagged
@@ -2718,19 +2717,6 @@ MonoBehaviour:
   players:
   - {fileID: 6177360790695505791}
   - {fileID: 949298909}
---- !u!114 &1665974608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1665974605}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08a7fa7063d925548865380459288db5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timerDuration: 30
 --- !u!1 &1670989463
 GameObject:
   m_ObjectHideFlags: 0
