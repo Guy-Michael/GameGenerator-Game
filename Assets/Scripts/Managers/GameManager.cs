@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        print(AnalyticsManager.analytics[Player.Player1].name);
+        print(AnalyticsManager.analytics[Player.Player2].name);
         //This should be randomized.
         currentPlayer = Player.Player1;
         
