@@ -6,6 +6,10 @@ using UnityEngine;
 
 public static class SceneTransitionManager
 {
+    public static bool IsCurrentSceneGame
+    {
+        get => SceneManager.GetActiveScene().name.Equals("Game");
+    }
     public static void MoveToNextScene()
     {
         int index = SceneManager.GetActiveScene().buildIndex;
