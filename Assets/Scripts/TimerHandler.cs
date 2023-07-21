@@ -17,7 +17,7 @@ public class TimerHandler : MonoBehaviour
         GameEvents.GameStarted.AddListener(StartTimer);
         GameEvents.TurnEnded.AddListener(RestartTimer);
 
-        text = transform.parent.GetComponentInChildren<TextMeshProUGUI>();
+        text = GetComponent<TextMeshProUGUI>();
     }
 
     public float GetElapsedTime()

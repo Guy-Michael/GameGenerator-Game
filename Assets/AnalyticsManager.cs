@@ -14,22 +14,27 @@ public struct PlayerAnalytics
 public static class AnalyticsManager
 {
     public static Dictionary<Player, PlayerAnalytics> analytics;
-    private static TimerHandler timerHandler;
-    
+    private static TimerHandler timerHandlerInstance;
+    private static TimerHandler TimerHandlerInstance
+    {
+        get 
+        {
+            if(timerHandlerInstance == null)
+            {
+                timerHandlerInstance =  GameObject.Find("Timer").GetComponent<TimerHandler>();
+            }
+
+            return timerHandlerInstance;
+        }
+    }
     static AnalyticsManager()
     {
-        Debug.Log(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name + ": analytics constructed");
         PlayerAnalytics temp = new();
         temp.moves = new();
 
         analytics = new();
         analytics.Add(Player.Player1, temp);
         analytics.Add(Player.Player2, temp);
-
-        if(SceneTransitionManager.IsCurrentSceneGame)
-        {
-            timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
-        }
     }
 
     public static void IncrementNumberOfMistakes(Player player)
@@ -45,7 +50,11 @@ public static class AnalyticsManager
     {
         SetProperty(player, (analytics) =>
         {
-            float timeToIncrementBy = timerHandler.GetElapsedTime();
+            if(TimerHandlerInstance == null)
+            {
+                
+            }
+            float timeToIncrementBy = TimerHandlerInstance.GetElapsedTime();
             analytics.playTime  += timeToIncrementBy;
             return analytics;
         });
@@ -67,8 +76,6 @@ public static class AnalyticsManager
             analytics.name = name;
             return analytics;
         });
-
-        Debug.Log(analytics[player].name);
     }
 
     private static void SetProperty(Player player, Func<PlayerAnalytics, PlayerAnalytics> setter)

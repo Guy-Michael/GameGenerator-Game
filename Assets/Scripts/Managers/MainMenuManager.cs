@@ -19,13 +19,7 @@ public class MainMenuManager : MonoBehaviour
     {
         if(gameCodes.ToList().Contains(gameCode))
         {
-            print("got it!");
             SceneTransitionManager.MoveToNextScene();
-        }
-
-        else
-        {
-            print("failed");
         }
     }
 }
