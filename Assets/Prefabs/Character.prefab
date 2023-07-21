@@ -145,7 +145,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1964712625296868666}
   - component: {fileID: 9081080267899664488}
-  - component: {fileID: 8348122591562991199}
   - component: {fileID: 1635185318470931563}
   m_Layer: 5
   m_Name: Sprite
@@ -182,21 +181,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8410415092883250762}
   m_CullTransparentMesh: 1
---- !u!114 &8348122591562991199
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8410415092883250762}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74114faecd458bb4ab45e177ee487a6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  active: {fileID: 21300000, guid: 2e98eed705eb40440872079d368d9ef4, type: 3}
-  idle: {fileID: 21300000, guid: 4480cbcd400662f4fa25ffb72e55ba1d, type: 3}
-  lost: {fileID: 21300000, guid: b460c8f8149115240a5f6f70c998718c, type: 3}
 --- !u!114 &1635185318470931563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,6 +220,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8927045364724051335}
+  - component: {fileID: 3695391300557268758}
   m_Layer: 5
   m_Name: Character
   m_TagString: Untagged
@@ -265,3 +250,18 @@ RectTransform:
   m_AnchoredPosition: {x: -650, y: -150}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3695391300557268758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800339270298243554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74114faecd458bb4ab45e177ee487a6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  active: {fileID: 21300000, guid: 2e98eed705eb40440872079d368d9ef4, type: 3}
+  idle: {fileID: 21300000, guid: 4480cbcd400662f4fa25ffb72e55ba1d, type: 3}
+  lost: {fileID: 21300000, guid: b460c8f8149115240a5f6f70c998718c, type: 3}

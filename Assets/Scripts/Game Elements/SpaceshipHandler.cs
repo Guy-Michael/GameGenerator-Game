@@ -14,8 +14,8 @@ public class SpaceshipHandler : MonoBehaviour
         spaceshipRectTransform = GetComponent<RectTransform>();
         
         playerRectTransforms = new();
-        playerRectTransforms.Add(Player.Player1, players[0]);
-        playerRectTransforms.Add(Player.Player2, players[1]);
+        playerRectTransforms.Add(Player.Astronaut, players[0]);
+        playerRectTransforms.Add(Player.Alien, players[1]);
 
         GameEvents.TurnEnded.AddListener(ToggleActivePlayer);
     }

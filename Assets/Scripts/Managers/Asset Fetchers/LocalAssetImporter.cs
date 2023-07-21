@@ -35,8 +35,8 @@ public class LocalAssetImporter : MonoBehaviour, IAssetImporter
     public Dictionary<Player, Sprite> ImportWinThumbnails()
     {
         Dictionary<Player, Sprite> winThumbnails = new();
-        winThumbnails.Add(Player.Player1, Resources.Load<Sprite>("Graphics/Win Thumbnails/Alien"));
-        winThumbnails.Add(Player.Player2, Resources.Load<Sprite>("Graphics/Win Thumbnails/Astronaut"));
+        winThumbnails.Add(Player.Astronaut, Resources.Load<Sprite>("Graphics/Win Thumbnails/Astronaut"));
+        winThumbnails.Add(Player.Alien, Resources.Load<Sprite>("Graphics/Win Thumbnails/Alien"));
 
         return winThumbnails;
     }
