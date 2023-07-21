@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum Player
 {
@@ -21,7 +20,6 @@ public class GameManager : MonoBehaviour
     LabelManager words;
     ScoreIndicatorManager scoreManager;
     public static Player currentPlayer;
-    SpaceshipHandler spaceship;
     TimerHandler timerHandler;
     int lastSelectedTileIndex;
     int lastSelectedLabelIndex;
@@ -29,43 +27,84 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        print(AnalyticsManager.analytics[Player.Player1].name);
-        print(AnalyticsManager.analytics[Player.Player2].name);
-        //This should be randomized.
-        currentPlayer = Player.Player1;
-        
+        InitIntroScreen();
+    }
+
+    private void InitIntroScreen()
+    {
+        ChooseAndDisplayFirstPlayer();
+
+        GameObject firstPlayerScreen = GameObject.Find("First Player Decleration Elements");
+        GameObject gameScreen = GameObject.Find("Game");
+
+        gameScreen.SetActive(false);
+
+        Button b = GameObject.Find("First Player Decleration Elements").GetComponentInChildren<Button>();
+        b.onClick.AddListener(() => OnGameStart(firstPlayerScreen, gameScreen));
+    }
+
+    private static void ChooseAndDisplayFirstPlayer()
+    {
+        int randomIndex = Mathf.RoundToInt(UnityEngine.Random.value);
+        currentPlayer = (Player)Enum.GetValues(typeof(Player)).GetValue(randomIndex);
+
+        TMPro.TextMeshProUGUI FirstPlayerName = GameObject.Find("Captions/Player Name").GetComponent<TMPro.TextMeshProUGUI>();
+        FirstPlayerName.text = AnalyticsManager.analytics[currentPlayer].name;
+    }
+
+    private void OnGameStart(GameObject firstPlayerScreen, GameObject gameScreen)
+    {
+        firstPlayerScreen.SetActive(false);
+        gameScreen.SetActive(true);
+
+        InitializeMoves();
+        InitializeGameElements();
+        InitializeGameTheme();
+        AddEventListeners();
+        GameEvents.GameStarted.Invoke();
+    }
+
+    private void InitializeMoves()
+    {
         movesMade = new();
         movesMade.Add(Player.Player1, new List<int>());
         movesMade.Add(Player.Player2, new List<int>());
 
         lastSelectedLabelIndex = -1;
         lastSelectedTileIndex = -1;
+    }
 
-        //BAD WAY TO SEARCH, SHOULD CHANGE. MAYBE USE SERIALIZED FIELDS
+    private void InitializeGameElements()
+    {
         gameBoard = GameObject.Find("Tiles").GetComponent<TileManager>();
         gameBoard.InitTiles(OnTileClick);
 
         words = GameObject.Find("Labels").GetComponent<LabelManager>();
         words.Init(OnLabelClick);
 
-        spaceship = GameObject.Find("Spaceship").GetComponent<SpaceshipHandler>();
-
-        contentLoader = GetComponent<GameLoader>();
-        IAssetImporter importer = GetComponent<LocalAssetImporter>();
-        contentLoader.InitializeGameGraphics(importer);
+        SpaceshipHandler spaceship = GameObject.Find("Spaceship").GetComponent<SpaceshipHandler>();
+        spaceship.SetActivePlayer(currentPlayer);
 
         scoreManager = GameObject.Find("Score Indicators").GetComponent<ScoreIndicatorManager>();
-
         timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
+    }
 
+    private void AddEventListeners()
+    {
         GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
         GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
         GameEvents.TurnEnded.AddListener(OnTurnEnded);
         GameEvents.GameWon.AddListener(OnGameWon);
         GameEvents.RoundEnded.AddListener(OnRoundEnded);
-
-        GameEvents.GameStarted.Invoke();
     }
+
+    private void InitializeGameTheme()
+    {
+        contentLoader = GetComponent<GameLoader>();
+        IAssetImporter importer = GetComponent<LocalAssetImporter>();
+        contentLoader.InitializeGameGraphics(importer);
+    }
+
 
     void OnTileClick(int tileIndex)
     {
