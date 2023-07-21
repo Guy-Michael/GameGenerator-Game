@@ -33,8 +33,8 @@ public static class AnalyticsManager
         temp.moves = new();
 
         analytics = new();
-        analytics.Add(Player.Player1, temp);
-        analytics.Add(Player.Player2, temp);
+        analytics.Add(Player.Astronaut, temp);
+        analytics.Add(Player.Alien, temp);
     }
 
     public static void IncrementNumberOfMistakes(Player player)

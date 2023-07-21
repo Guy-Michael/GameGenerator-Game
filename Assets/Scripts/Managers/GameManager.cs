@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public enum Player
 {
-    Player1,
-    Player2, 
+    Astronaut,
+    Alien, 
     Tie
 }
 
@@ -67,8 +67,8 @@ public class GameManager : MonoBehaviour
     private void InitializeMoves()
     {
         movesMade = new();
-        movesMade.Add(Player.Player1, new List<int>());
-        movesMade.Add(Player.Player2, new List<int>());
+        movesMade.Add(Player.Astronaut, new List<int>());
+        movesMade.Add(Player.Alien, new List<int>());
 
         lastSelectedLabelIndex = -1;
         lastSelectedTileIndex = -1;
@@ -215,8 +215,8 @@ public class GameManager : MonoBehaviour
             gameBoard.ResetAll();
             words.ResetAll();
             Destroy(line);
-            movesMade[Player.Player1].Clear();
-            movesMade[Player.Player2].Clear();
+            movesMade[Player.Astronaut].Clear();
+            movesMade[Player.Alien].Clear();
 
         });
     }

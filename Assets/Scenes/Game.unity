@@ -2162,15 +2162,15 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: a1368e583181c0b469fd7794ccad62bb, type: 3}
-    - target: {fileID: 8348122591562991199, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: idle
       value: 
       objectReference: {fileID: 21300000, guid: a1368e583181c0b469fd7794ccad62bb, type: 3}
-    - target: {fileID: 8348122591562991199, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: lost
       value: 
       objectReference: {fileID: 21300000, guid: 9f5d40b7c0c06f24abe343000cbc017a, type: 3}
-    - target: {fileID: 8348122591562991199, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: active
       value: 
       objectReference: {fileID: 21300000, guid: a90b5463b1edaf34aad4a4afd6a798a3, type: 3}
@@ -2887,9 +2887,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45747748}
     m_Modifications:
+    - target: {fileID: 794312776040504679, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: player
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5477486298915927427, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: m_Name
       value: Player 1 Score
+      objectReference: {fileID: 0}
+    - target: {fileID: 8069508352669609978, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 8800339270298243554, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: m_Name
@@ -4279,8 +4291,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   players:
-  - {fileID: 6177360790695505791}
   - {fileID: 949298909}
+  - {fileID: 6177360790695505791}
 --- !u!1001 &1708368865
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4292,22 +4304,18 @@ PrefabInstance:
       propertyPath: m_text
       value: "\u05D3\u05D5\u05E8"
       objectReference: {fileID: 0}
+    - target: {fileID: 794312776040504679, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1635185318470931563, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: a1368e583181c0b469fd7794ccad62bb, type: 3}
-    - target: {fileID: 8348122591562991199, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
-      propertyPath: idle
-      value: 
-      objectReference: {fileID: 21300000, guid: a1368e583181c0b469fd7794ccad62bb, type: 3}
-    - target: {fileID: 8348122591562991199, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
-      propertyPath: lost
-      value: 
-      objectReference: {fileID: 21300000, guid: 9f5d40b7c0c06f24abe343000cbc017a, type: 3}
-    - target: {fileID: 8348122591562991199, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
-      propertyPath: active
-      value: 
-      objectReference: {fileID: 21300000, guid: a90b5463b1edaf34aad4a4afd6a798a3, type: 3}
+    - target: {fileID: 8069508352669609978, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 500
+      objectReference: {fileID: 0}
     - target: {fileID: 8800339270298243554, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: m_Name
       value: Astronaut
@@ -6405,9 +6413,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 125821418}
     m_Modifications:
-    - target: {fileID: 5477486298915927427, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
-      propertyPath: m_Name
-      value: Player 1 Score
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: player
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8800339270298243554, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: m_Name

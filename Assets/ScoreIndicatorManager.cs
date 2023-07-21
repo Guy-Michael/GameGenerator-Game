@@ -18,18 +18,18 @@ public class ScoreIndicatorManager : MonoBehaviour
     void Start()
     {
         roundScore = new();
-        roundScore[Player.Player1] = 0;
-        roundScore[Player.Player2] = 0;
+        roundScore[Player.Astronaut] = 0;
+        roundScore[Player.Alien] = 0;
         
         setSprites = new();
-        setSprites[Player.Player1] = player1;
-        setSprites[Player.Player2] = player2;
+        setSprites[Player.Astronaut] = player1;
+        setSprites[Player.Alien] = player2;
         setSprites[Player.Tie] = tie;
         currentSet = 0;
 
         roundScoreIndicators = new();
-        roundScoreIndicators[Player.Player1] = transform.Find("Round Indicators/Player 1 Score/Current").GetComponent<TextMeshProUGUI>();
-        roundScoreIndicators[Player.Player2] = transform.Find("Round Indicators/Player 2 Score/Current").GetComponent<TextMeshProUGUI>();
+        roundScoreIndicators[Player.Astronaut] = transform.Find("Round Indicators/Player 1 Score/Current").GetComponent<TextMeshProUGUI>();
+        roundScoreIndicators[Player.Alien] = transform.Find("Round Indicators/Player 2 Score/Current").GetComponent<TextMeshProUGUI>();
 
         setIndicators = new();
         foreach(Transform child in transform.Find("Set Indicators").transform)
@@ -45,8 +45,8 @@ public class ScoreIndicatorManager : MonoBehaviour
 
         if(roundScore[player] >= 3)
         {
-            roundScore[Player.Player1] = 0;
-            roundScore[Player.Player2] = 0;
+            roundScore[Player.Astronaut] = 0;
+            roundScore[Player.Alien] = 0;
             WinSet(player);
             // GameEvents.SetWon.Invoke();
         } 

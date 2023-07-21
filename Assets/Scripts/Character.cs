@@ -9,13 +9,19 @@ public enum CharacterState
     Lost
 }
 
-[System.Serializable]
-public class States : Dictionary<CharacterState, Sprite> {}
-
 public class Character : MonoBehaviour
 {
+    [SerializeField] Player player;
     [SerializeField] Sprite active;
     [SerializeField] Sprite idle;
     [SerializeField] Sprite lost;
+
+    void Start()
+    {
+        TMPro.TextMeshProUGUI name = GetComponentInChildren<TMPro.TextMeshProUGUI>();
+        name.text = AnalyticsManager.analytics[player].name;
+    }
+
+
 
 }

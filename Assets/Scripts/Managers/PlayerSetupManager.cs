@@ -17,8 +17,8 @@ public class PlayerSetupManager : MonoBehaviour
 
     void OnGameStart()
     {
-        AnalyticsManager.SetPlayerName(Player.Player1, player1InputField.text);
-        AnalyticsManager.SetPlayerName(Player.Player2, player2InputField.text);
+        AnalyticsManager.SetPlayerName(Player.Astronaut, player1InputField.text);
+        AnalyticsManager.SetPlayerName(Player.Alien, player2InputField.text);
         SceneTransitionManager.MoveToGameScene();
     }
 }
