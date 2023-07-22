@@ -50,10 +50,6 @@ public static class AnalyticsManager
     {
         SetProperty(player, (analytics) =>
         {
-            if(TimerHandlerInstance == null)
-            {
-                
-            }
             float timeToIncrementBy = TimerHandlerInstance.GetElapsedTime();
             analytics.playTime  += timeToIncrementBy;
             return analytics;

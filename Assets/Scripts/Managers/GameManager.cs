@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public enum Player
 {
@@ -14,7 +15,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] bool devMode;
     public static Dictionary<Player, (Sprite sprite, string caption, bool isCorrect)> analyticsMoveRecords;
-    Dictionary<Player, List<int>> movesMade;
+    Dictionary<Player, List<int>> movesMadeInCurrentRound;
     GameLoader contentLoader;
     TileManager gameBoard;
     LabelManager words;
@@ -66,9 +67,9 @@ public class GameManager : MonoBehaviour
 
     private void InitializeMoves()
     {
-        movesMade = new();
-        movesMade.Add(Player.Astronaut, new List<int>());
-        movesMade.Add(Player.Alien, new List<int>());
+        movesMadeInCurrentRound = new();
+        movesMadeInCurrentRound.Add(Player.Astronaut, new List<int>());
+        movesMadeInCurrentRound.Add(Player.Alien, new List<int>());
 
         lastSelectedLabelIndex = -1;
         lastSelectedTileIndex = -1;
@@ -122,7 +123,7 @@ public class GameManager : MonoBehaviour
     private void DevModeWin()
     {
         gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
-        movesMade[currentPlayer].Add(lastSelectedTileIndex);
+        movesMadeInCurrentRound[currentPlayer].Add(lastSelectedTileIndex);
         gameBoard.DisableTile(lastSelectedTileIndex);
         AnalyticsManager.IncrementScore(currentPlayer);
 
@@ -181,16 +182,13 @@ public class GameManager : MonoBehaviour
             GameEvents.RoundEnded.Invoke();
         }
 
-        else
-        {
-            GameEvents.TurnEnded.Invoke();
-        }
+        GameEvents.TurnEnded.Invoke();
     }
 
     private void OnPlayerGotMatch()
     {
         gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
-        movesMade[currentPlayer].Add(lastSelectedTileIndex);
+        movesMadeInCurrentRound[currentPlayer].Add(lastSelectedTileIndex);
         gameBoard.DisableTile(lastSelectedTileIndex);
         words.DisableLabel(lastSelectedLabelIndex);
         
@@ -203,22 +201,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnRoundEnded()
+    private async void OnRoundEnded()
     {
         LineRenderer line = DrawLineRendererOnWinningTriplet();
         timerHandler.PauseTimer();
         
-        Timer.Fire(2f, () => 
-        {
-            timerHandler.ResumeTimer();
-            GameEvents.TurnEnded.Invoke();
-            gameBoard.ResetAll();
-            words.ResetAll();
-            Destroy(line);
-            movesMade[Player.Astronaut].Clear();
-            movesMade[Player.Alien].Clear();
+        await Task.Delay(2000);
 
-        });
+        Destroy(line);
+        gameBoard.ResetAll();
+        words.ResetAll();
+        movesMadeInCurrentRound[Player.Astronaut].Clear();
+        movesMadeInCurrentRound[Player.Alien].Clear();
+        timerHandler.ResumeTimer();
     }
 
     private LineRenderer DrawLineRendererOnWinningTriplet()
@@ -258,7 +253,7 @@ public class GameManager : MonoBehaviour
 
     private (int, int, int) GetWinningTriplet()
     {
-        List<int> currentPlayerMoves = movesMade[currentPlayer];
+        List<int> currentPlayerMoves = movesMadeInCurrentRound[currentPlayer];
         foreach((int a, int b, int c) triplet in GetWinningTriplets())
         {
             if(currentPlayerMoves.Contains(triplet.a) &&
@@ -274,7 +269,7 @@ public class GameManager : MonoBehaviour
 
     private bool CheckForCurrentPlayerWin()
     {
-        List<int> currentPlayerMoves = movesMade[currentPlayer];
+        List<int> currentPlayerMoves = movesMadeInCurrentRound[currentPlayer];
         foreach((int a, int b, int c) triplet in GetWinningTriplets())
         {
             if(currentPlayerMoves.Contains(triplet.a) &&
