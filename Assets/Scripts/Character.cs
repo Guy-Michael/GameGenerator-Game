@@ -9,6 +9,7 @@ public class Character : MonoBehaviour
     [SerializeField] Sprite active;
     [SerializeField] Sprite idle;
     [SerializeField] Sprite lost;
+    [SerializeField] Color NotSelectedTint;
     Image image;
     void Start()
     {
@@ -39,6 +40,12 @@ public class Character : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void SetActiveInGame(bool isActive)
+    {
+        image.sprite = isActive ? active : idle; 
+        image.color = isActive ? Color.white : NotSelectedTint;
     }
 
 

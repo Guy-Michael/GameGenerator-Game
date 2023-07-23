@@ -19,11 +19,7 @@ public static class AnalyticsManager
     {
         get 
         {
-            if(timerHandlerInstance == null)
-            {
-                timerHandlerInstance =  GameObject.Find("Timer").GetComponent<TimerHandler>();
-            }
-
+            timerHandlerInstance = timerHandlerInstance ?? GameObject.Find("Timer").GetComponent<TimerHandler>();
             return timerHandlerInstance;
         }
     }
@@ -35,6 +31,9 @@ public static class AnalyticsManager
         analytics = new();
         analytics.Add(Player.Astronaut, temp);
         analytics.Add(Player.Alien, temp);
+
+        SetPlayerName(Player.Astronaut, TextConsts.defaultPlayerNames[Player.Astronaut]);
+        SetPlayerName(Player.Alien, TextConsts.defaultPlayerNames[Player.Alien]);
     }
 
     public static void IncrementNumberOfMistakes(Player player)

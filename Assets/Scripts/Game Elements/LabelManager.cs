@@ -14,7 +14,6 @@ public class LabelManager : MonoBehaviour
         get => (index >= 0) && index < gameLabels.Length ? gameLabels[index] : null;// throw new IndexOutOfRangeException($"There are {gameLabels.Length} label indices but index {index} was accessed.");
     }
 
-    //Initializes functionality.
     public void Init(Action<int> onLabelClickCallback)
     {
         this.gameLabels = GetComponentsInChildren<GameLabel>();
@@ -23,8 +22,7 @@ public class LabelManager : MonoBehaviour
             gameLabels[i].Init(i, onLabelClickCallback);
         }
     }
-
-    //This is for initializing the graphics
+    
     public void LoadContent(string[] realData, string[] additionalData)
     {
         List<string> dataToUse = new();
@@ -36,7 +34,9 @@ public class LabelManager : MonoBehaviour
 
         int remainingAmount = numberOfLabels - numberOfGameTiles;
         dataToUse.AddRange(additionalData[0..remainingAmount]);
-        dataToUse = dataToUse.OrderBy(s => UnityEngine.Random.value).ToList();
+
+        //RANDOMNESS DISABLED. RETURN THIS!!
+        // dataToUse = dataToUse.OrderBy(s => UnityEngine.Random.value).ToList();
 
         for(int i = 0; i < dataToUse.Count; i++)
         {
@@ -57,5 +57,11 @@ public class LabelManager : MonoBehaviour
         this[index].Disable();
     }
 
-
+    public void SetLabelsEnabled(bool enabled)
+    {
+        foreach(GameLabel label in gameLabels)
+        {
+            label.SetInteractable(enabled);
+        }
+    }
 }

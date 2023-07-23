@@ -9,10 +9,10 @@ public static class GameEvents
 {
     public static UnityEvent PlayerGotMatch = new();
     public static UnityEvent PlayerFailedMatch = new();
-    public static UnityEvent TurnEnded = new();
+    public static UnityEventAsync TurnEnded = new();
     public static UnityEvent GameStarted = new();
     public static UnityEvent<string> GameTypeSelected = new();
-    public static UnityEventAsync RoundEnded = new();
+    public static UnityEventAsync SetEnded = new();
     public static UnityEvent SetWon = new();
     public static UnityEvent GameWon = new();
 }
@@ -33,9 +33,6 @@ public class UnityEventAsync: UnityEvent
     
     public new async Task Invoke()
     {
-        base.Invoke();
-
-        // Debug.Log("A-SYNC invocation: " + Time.realtimeSinceStartup);
         Task[] tasks = new Task[asyncListeners.Count];
         for(int i = 0; i < asyncListeners.Count; i++)
         {
@@ -44,7 +41,7 @@ public class UnityEventAsync: UnityEvent
         }
 
         await Task.WhenAll(tasks);
-        // Debug.Log("A-SYNC invocation: " + Time.realtimeSinceStartup);
+        base.Invoke();
     }
 }
 

@@ -4,22 +4,20 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
 
-
-
 public class GameManager : MonoBehaviour
 {
     [SerializeField] bool devMode;
-    public static Dictionary<Player, (Sprite sprite, string caption, bool isCorrect)> analyticsMoveRecords;
-    Dictionary<Player, List<int>> movesMadeInCurrentRound;
+    [SerializeField] int delayBetweenTurnsInMillis;
+    Dictionary<Player, List<int>> correctMovesMadeInCurrentSet;
     GameLoader contentLoader;
     TileManager gameBoard;
     LabelManager words;
     ScoreIndicatorManager scoreManager;
-    public static Player currentPlayer;
     TimerHandler timerHandler;
+    SpaceshipHandler spaceshipHandler;
+    public static Player currentPlayer;
     int lastSelectedTileIndex;
     int lastSelectedLabelIndex;
-    
 
     void Start()
     {
@@ -46,7 +44,6 @@ public class GameManager : MonoBehaviour
         currentPlayer = (Player)Enum.GetValues(typeof(Player)).GetValue(randomIndex);
 
         firstPlayerScreen.GetComponent<FirstPlayerDisplayer>().Init(currentPlayer);
-
     }
 
     private void OnGameStart(GameObject firstPlayerScreen, GameObject gameScreen)
@@ -63,9 +60,9 @@ public class GameManager : MonoBehaviour
 
     private void InitializeMoves()
     {
-        movesMadeInCurrentRound = new();
-        movesMadeInCurrentRound.Add(Player.Astronaut, new List<int>());
-        movesMadeInCurrentRound.Add(Player.Alien, new List<int>());
+        correctMovesMadeInCurrentSet = new();
+        correctMovesMadeInCurrentSet.Add(Player.Astronaut, new List<int>());
+        correctMovesMadeInCurrentSet.Add(Player.Alien, new List<int>());
 
         lastSelectedLabelIndex = -1;
         lastSelectedTileIndex = -1;
@@ -79,8 +76,8 @@ public class GameManager : MonoBehaviour
         words = GameObject.Find("Labels").GetComponent<LabelManager>();
         words.Init(OnLabelClick);
 
-        SpaceshipHandler spaceship = GameObject.Find("Spaceship").GetComponent<SpaceshipHandler>();
-        spaceship.SetActivePlayer(currentPlayer);
+        spaceshipHandler = GameObject.Find("Spaceship").GetComponent<SpaceshipHandler>();
+        spaceshipHandler.SetActivePlayer(currentPlayer);
 
         scoreManager = GameObject.Find("Score Indicators").GetComponent<ScoreIndicatorManager>();
         timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
@@ -90,9 +87,9 @@ public class GameManager : MonoBehaviour
     {
         GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
         GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
-        GameEvents.TurnEnded.AddListener(OnTurnEnded);
+        GameEvents.TurnEnded.AddAsyncListener(OnTurnEnded);
         GameEvents.GameWon.AddListener(OnGameWon);
-        GameEvents.RoundEnded.AddAsyncListener(OnRoundEnded);
+        GameEvents.SetEnded.AddAsyncListener(OnSetEnded);
     }
 
     private void InitializeGameTheme()
@@ -101,7 +98,6 @@ public class GameManager : MonoBehaviour
         IAssetImporter importer = GetComponent<LocalAssetImporter>();
         contentLoader.InitializeGameGraphics(importer);
     }
-
 
     void OnTileClick(int tileIndex)
     {
@@ -116,26 +112,7 @@ public class GameManager : MonoBehaviour
         if(devMode) DevModeWin();
     }
 
-    private async void DevModeWin()
-    {
-        gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
-        movesMadeInCurrentRound[currentPlayer].Add(lastSelectedTileIndex);
-        gameBoard.DisableTile(lastSelectedTileIndex);
-        AnalyticsManager.IncrementScore(currentPlayer);
-
-        if(CheckForCurrentPlayerWin())
-        {
-            scoreManager.IncrementScore(currentPlayer);
-            await GameEvents.RoundEnded.Invoke();
-        }
-
-        else
-        {
-            GameEvents.TurnEnded.Invoke();
-        }
-    }
-
-    void OnLabelClick(int labelIndex)
+   void OnLabelClick(int labelIndex)
     {
         if(lastSelectedLabelIndex != -1)
         {
@@ -145,6 +122,27 @@ public class GameManager : MonoBehaviour
         CheckForMatch();
     }
 
+    private async void DevModeWin()
+    {
+        gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
+        correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedTileIndex);
+        gameBoard.DisableTile(lastSelectedTileIndex);
+        AnalyticsManager.IncrementScore(currentPlayer);
+
+        if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
+        {
+            scoreManager.IncrementScore(currentPlayer);
+            await GameEvents.SetEnded.Invoke();
+        }
+
+        else
+        {
+            await GameEvents.TurnEnded.Invoke();
+        }
+
+        MoveControlToOtherPlayer();
+    }
+
     async void CheckForMatch()
     {
         if(lastSelectedLabelIndex == -1 || lastSelectedTileIndex == -1)
@@ -152,12 +150,9 @@ public class GameManager : MonoBehaviour
             return;
         } 
 
-
         string labelText = words[lastSelectedLabelIndex].Content;
         string tileSpriteName = gameBoard[lastSelectedTileIndex].SpriteName;
 
-
-        //Capture sprite and caption for anlytics.
         bool isMoveCorrect = false;
         if(labelText.Equals(tileSpriteName))
         {
@@ -170,74 +165,91 @@ public class GameManager : MonoBehaviour
             GameEvents.PlayerFailedMatch.Invoke();
         }
 
-        AnalyticsManager.RecordMove(currentPlayer, labelText, gameBoard[lastSelectedTileIndex].sprite, isMoveCorrect);
+        AnalyticsManager.RecordMove(currentPlayer, labelText, gameBoard[lastSelectedTileIndex].themeSprite, isMoveCorrect);
         AnalyticsManager.IncrementPlaytime(currentPlayer);
         
-        if(CheckForCurrentPlayerWin())
+        if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
-            await GameEvents.RoundEnded.Invoke();
+            await GameEvents.SetEnded.Invoke();
         }
 
-        GameEvents.TurnEnded.Invoke();
+        else
+        {
+            await GameEvents.TurnEnded.Invoke();
+        }
+
+        MoveControlToOtherPlayer();
     }
 
     private void OnPlayerGotMatch()
     {
+        spaceshipHandler.SetTurnEndMessage(true);
+        GameGraphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Active);
         gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
-        movesMadeInCurrentRound[currentPlayer].Add(lastSelectedTileIndex);
+        correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedTileIndex);
+        
         gameBoard.DisableTile(lastSelectedTileIndex);
         words.DisableLabel(lastSelectedLabelIndex);
         
         AnalyticsManager.IncrementScore(currentPlayer);
 
-
-        if(CheckForCurrentPlayerWin())
+        if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
             scoreManager.IncrementScore(currentPlayer);
         }
     }
 
-    private async Task OnRoundEnded()
-    {
-        LineRenderer line = DrawLineRendererOnWinningTriplet();
-        timerHandler.PauseTimer();
-        
-        await Task.Delay(2000);
-
-        Destroy(line);
-        gameBoard.ResetAll();
-        words.ResetAll();
-        movesMadeInCurrentRound[Player.Astronaut].Clear();
-        movesMadeInCurrentRound[Player.Alien].Clear();
-        timerHandler.ResumeTimer();
-    }
-
-    private LineRenderer DrawLineRendererOnWinningTriplet()
-    {
-        LineRenderer line = gameBoard.gameObject.AddComponent<LineRenderer>();
-        line.positionCount = 2;
-        (int a, int b, int c) winningTriplet = GetWinningTriplet();
-
-        Vector3 start = gameBoard[winningTriplet.a].transform.position;
-        start.z = 1;
-
-        Vector3 end = gameBoard[winningTriplet.c].transform.position;
-        end.z = 1;
-
-        line.SetPosition(0, start);
-        line.SetPosition(1, end);
-        line.startWidth = 0.1f;
-        line.endWidth = 0.1f;
-
-        return line;
-    }
-
     private void OnPlayerFailedMatch()
     {
+        spaceshipHandler.SetTurnEndMessage(false);
+        GameGraphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Lost);
         AnalyticsManager.IncrementNumberOfMistakes(currentPlayer);
     }
 
-    private void OnTurnEnded()
+    private async Task OnSetEnded()
+    {
+        (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
+        LineRenderer line = GameUtils.DrawLineRendererOnWinningTriplet(gameBoard, winningTriplet);
+        spaceshipHandler.DisplayWonMessage();
+        SetupTurnEnded(true);
+        
+        await Task.Delay(delayBetweenTurnsInMillis);
+
+        SetupTurnStarted();
+        Destroy(line);
+        words.ResetAll();
+        gameBoard.ResetAll();
+        correctMovesMadeInCurrentSet[Player.Astronaut].Clear();
+        correctMovesMadeInCurrentSet[Player.Alien].Clear();
+    }
+
+    private async Task OnTurnEnded()
+    {
+        SetupTurnEnded(false);
+        await Task.Delay(delayBetweenTurnsInMillis);
+        SetupTurnStarted();
+    }
+
+    private void SetupTurnStarted()
+    {
+        SetControlsEnabled(true);
+        gameBoard.SetTilesEnabled(true);
+        words.SetLabelsEnabled(true);
+        spaceshipHandler.ToggleActivePlayer();
+        timerHandler.RestartTimer();
+        spaceshipHandler.ResetTurnEndMessage();
+        GameGraphicsManager.ResetPlayersSprites();
+    }
+
+    private void SetupTurnEnded(bool keepTilesVisible)
+    {
+        gameBoard.SetTilesEnabled(keepTilesVisible);
+        SetControlsEnabled(false);
+        words.SetLabelsEnabled(false);
+        timerHandler.MakeTimerInvisible();
+    }
+
+    private void MoveControlToOtherPlayer()
     {
         currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
         words[lastSelectedLabelIndex]?.SetLabelSelected(false);
@@ -247,57 +259,17 @@ public class GameManager : MonoBehaviour
         lastSelectedTileIndex = -1;
     }
 
-    private (int, int, int) GetWinningTriplet()
+    private void SetControlsEnabled(bool enabled)
     {
-        List<int> currentPlayerMoves = movesMadeInCurrentRound[currentPlayer];
-        foreach((int a, int b, int c) triplet in GetWinningTriplets())
+        if(enabled)
         {
-            if(currentPlayerMoves.Contains(triplet.a) &&
-                currentPlayerMoves.Contains(triplet.b) &&
-                currentPlayerMoves.Contains(triplet.c))
-            {
-                return triplet;
-            }
+            words.SetLabelsEnabled(enabled);
+            gameBoard.SetTilesEnabled(enabled);
         }
-
-        return (-1, -1 , -1);
-    }
-
-    private bool CheckForCurrentPlayerWin()
-    {
-        List<int> currentPlayerMoves = movesMadeInCurrentRound[currentPlayer];
-        foreach((int a, int b, int c) triplet in GetWinningTriplets())
-        {
-            if(currentPlayerMoves.Contains(triplet.a) &&
-                currentPlayerMoves.Contains(triplet.b) &&
-                currentPlayerMoves.Contains(triplet.c))
-                {
-                    return true;
-                }
-        }
-
-        return false;
     }
 
     private void OnGameWon()
     {
         SceneTransitionManager.MoveToNextScene();
-    }
-
-    private (int, int, int)[] GetWinningTriplets()
-    {
-        (int a, int b, int c)[] winningTriplets = new (int, int, int)[]
-        {
-            (0, 1, 2), //Top Row
-            (3, 4, 5), // Middle Row
-            (6, 7, 8), // Bottom Row
-            (0, 3, 6), // Left Column
-            (1, 4, 7), // Middle Column
-            (2, 5, 8), // Right Column
-            (0, 4, 8), // Main Diagonal
-            (2, 4, 6) // Sub Diagonal
-        };
-
-        return winningTriplets;
     }
 }
