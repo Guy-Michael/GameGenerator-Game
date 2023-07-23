@@ -5,13 +5,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+
 public class ScoreIndicatorManager : MonoBehaviour
 {
     [SerializeField] Sprite astronaut;
     [SerializeField] Sprite alien;
     [SerializeField] Sprite tie;
     Dictionary<Player, int> roundScore;
-    Dictionary<Player, Sprite> setSprites;
+    Dictionary<SetOutcome, Sprite> setSprites;
     Dictionary<Player, TextMeshProUGUI> roundScoreIndicators;
     List<Image> setIndicators;
     int currentSet;
@@ -22,9 +24,9 @@ public class ScoreIndicatorManager : MonoBehaviour
         roundScore[Player.Alien] = 0;
         
         setSprites = new();
-        setSprites[Player.Astronaut] = astronaut;
-        setSprites[Player.Alien] = alien;
-        setSprites[Player.Tie] = tie;
+        setSprites[SetOutcome.AstronautWin] = astronaut;
+        setSprites[SetOutcome.AlienWin] = alien;
+        setSprites[SetOutcome.Tie] = tie;
         currentSet = 0;
 
         roundScoreIndicators = new();
@@ -47,13 +49,13 @@ public class ScoreIndicatorManager : MonoBehaviour
         {
             roundScore[Player.Astronaut] = 0;
             roundScore[Player.Alien] = 0;
-            WinSet(player);
+            WinSet(player.ToOutcome());
         } 
     }
 
-    private void WinSet(Player player)
+    private void WinSet(SetOutcome outcome)
     {
-        setIndicators[currentSet].sprite = setSprites[player];
+        setIndicators[currentSet].sprite = setSprites[outcome];
         Color color = setIndicators[currentSet].color;
         color.a = 255;
         setIndicators[currentSet].color = color;

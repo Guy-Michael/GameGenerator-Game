@@ -4,12 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
 
-public enum Player
-{
-    Astronaut,
-    Alien, 
-    Tie
-}
+
 
 public class GameManager : MonoBehaviour
 {
@@ -33,10 +28,11 @@ public class GameManager : MonoBehaviour
 
     private void InitIntroScreen()
     {
-        ChooseAndDisplayFirstPlayer();
 
         GameObject firstPlayerScreen = GameObject.Find("First Player Decleration Elements");
         GameObject gameScreen = GameObject.Find("Game");
+        
+        ChooseAndDisplayFirstPlayer(firstPlayerScreen);
 
         gameScreen.SetActive(false);
 
@@ -44,13 +40,13 @@ public class GameManager : MonoBehaviour
         b.onClick.AddListener(() => OnGameStart(firstPlayerScreen, gameScreen));
     }
 
-    private static void ChooseAndDisplayFirstPlayer()
+    private static void ChooseAndDisplayFirstPlayer(GameObject firstPlayerScreen)
     {
         int randomIndex = Mathf.RoundToInt(UnityEngine.Random.value);
         currentPlayer = (Player)Enum.GetValues(typeof(Player)).GetValue(randomIndex);
 
-        TMPro.TextMeshProUGUI FirstPlayerName = GameObject.Find("Captions/Player Name").GetComponent<TMPro.TextMeshProUGUI>();
-        FirstPlayerName.text = AnalyticsManager.analytics[currentPlayer].name;
+        firstPlayerScreen.GetComponent<FirstPlayerDisplayer>().Init(currentPlayer);
+
     }
 
     private void OnGameStart(GameObject firstPlayerScreen, GameObject gameScreen)
@@ -120,7 +116,7 @@ public class GameManager : MonoBehaviour
         if(devMode) DevModeWin();
     }
 
-    private void DevModeWin()
+    private async void DevModeWin()
     {
         gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
         movesMadeInCurrentRound[currentPlayer].Add(lastSelectedTileIndex);
@@ -130,7 +126,7 @@ public class GameManager : MonoBehaviour
         if(CheckForCurrentPlayerWin())
         {
             scoreManager.IncrementScore(currentPlayer);
-            GameEvents.RoundEnded.Invoke();
+            await GameEvents.RoundEnded.Invoke();
         }
 
         else
@@ -179,12 +175,9 @@ public class GameManager : MonoBehaviour
         
         if(CheckForCurrentPlayerWin())
         {
-            print("waiting for round");
             await GameEvents.RoundEnded.Invoke();
-            print("finished round");
         }
 
-        print("invoking turn ended");
         GameEvents.TurnEnded.Invoke();
     }
 
