@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class SpaceshipHandler : MonoBehaviour
@@ -7,6 +9,7 @@ public class SpaceshipHandler : MonoBehaviour
     [SerializeField] RectTransform[] players;
     RectTransform spaceshipRectTransform;
     Dictionary<Player, RectTransform> playerRectTransforms;
+    TextMeshProUGUI turnEndMessage;
     int selectedPlayerIndex = 0;
     
     void Start()
@@ -17,7 +20,7 @@ public class SpaceshipHandler : MonoBehaviour
         playerRectTransforms.Add(Player.Astronaut, players[0]);
         playerRectTransforms.Add(Player.Alien, players[1]);
 
-        GameEvents.TurnEnded.AddListener(ToggleActivePlayer);
+        turnEndMessage = transform.Find("Turn End Message").GetComponent<TextMeshProUGUI>();
     }
 
     public void SetActivePlayer(Player player)
@@ -37,5 +40,20 @@ public class SpaceshipHandler : MonoBehaviour
         float nextPlayerX = players[selectedPlayerIndex].anchoredPosition.x;
         float currentY = spaceshipRectTransform.anchoredPosition.y;
         spaceshipRectTransform.anchoredPosition = new Vector2(nextPlayerX, currentY);
+    }
+
+    public void SetTurnEndMessage(bool hasWon)
+    {
+        turnEndMessage.text = hasWon ? TextConsts.playerWonTurn : TextConsts.playerLostTurn;
+    }
+
+    public void ResetTurnEndMessage()
+    {
+        turnEndMessage.text = "";
+    }
+
+    internal void DisplayWonMessage()
+    {
+        turnEndMessage.text = TextConsts.playerWonSet;
     }
 }

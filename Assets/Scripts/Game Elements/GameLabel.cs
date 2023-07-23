@@ -10,8 +10,10 @@ public class GameLabel : MonoBehaviour
     Button button;
     TextMeshProUGUI text;
     int index;
+    string content;
+    bool lastInteractableState;
 
-    public string Content { get => text?.text; }
+    public string Content { get => content; }
 
     public void Init(int index, Action<int> onLabelClick)
     {
@@ -20,12 +22,15 @@ public class GameLabel : MonoBehaviour
         button = GetComponentInChildren<Button>();
         button.onClick.AddListener(() => SetLabelSelected(true));
         button.onClick.AddListener(() => onLabelClick(index));
+        lastInteractableState = true;
+        button.interactable = lastInteractableState;
     }
 
     public void LoadContent(string value)
     {
         TextMeshProUGUI text = GetComponentInChildren<TextMeshProUGUI>();
         text.text = value;
+        this.content = value;
     }
 
     public void SetLabelSelected(bool isSelected)
@@ -36,11 +41,34 @@ public class GameLabel : MonoBehaviour
 
     public void Reset()
     {
-        button.interactable = true;
+        lastInteractableState = true;
+        button.interactable = lastInteractableState;
     }
     
     public void Disable()
     {
-        button.interactable = false;
+        lastInteractableState = false;
+        button.interactable = lastInteractableState;
+    }
+
+    public void SetInteractable(bool interactable)
+    {
+        Image image = transform.Find("Label").GetComponent<Image>();
+        if(interactable)
+        {
+            image.color = Color.white;
+            text.text = content;
+            button.interactable = lastInteractableState;
+
+        }
+
+        else
+        {
+            image.color = Color.grey;
+            text.text = "";
+            button.interactable = false;
+
+        }
+
     }
 }

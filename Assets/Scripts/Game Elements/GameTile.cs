@@ -8,7 +8,9 @@ using UnityEngine.Events;
 public class GameTile : MonoBehaviour
 {
     Dictionary<Player, Sprite> winSprites;
-    public Sprite sprite {get; private set;}
+    public Sprite themeSprite {get; private set;}
+    private Sprite lastAppliedSprite;
+    private bool lastInteractableState;
     Image image;
     Button button;
     int index;
@@ -16,10 +18,11 @@ public class GameTile : MonoBehaviour
     public string SpriteName {get => image.sprite.name;}
     public void LoadSprites(Sprite initialSprite, Dictionary<Player, Sprite> winSprites)
     {
-        this.sprite = initialSprite;
+        this.themeSprite = initialSprite;
 
         image = transform.Find("Image").GetComponent<Image>();
-        image.sprite = this.sprite;
+        image.sprite = this.themeSprite;
+        lastAppliedSprite = this.themeSprite;
         this.winSprites = winSprites;
     }
 
@@ -30,6 +33,9 @@ public class GameTile : MonoBehaviour
         button = transform.Find("Image").GetComponent<Button>();
         button.onClick.AddListener(() => SetBorderColorSelected(true));
         button.onClick.AddListener(() => onClickCallback(index));
+        lastInteractableState = true;
+        button.interactable = lastInteractableState;
+        
 
     }
 
@@ -41,18 +47,43 @@ public class GameTile : MonoBehaviour
 
     public void SetPlayerThumbnail(Player player)
     {
-        image.sprite = winSprites[player];
+        lastAppliedSprite = winSprites[player];
+        image.sprite = lastAppliedSprite;
     }
 
     public void Reset()
     {
         SetBorderColorSelected(false);
-        image.sprite = sprite;
-        button.interactable = true;
+        lastAppliedSprite = themeSprite;
+        image.sprite = lastAppliedSprite;
+        lastInteractableState = true;
+        button.interactable = lastInteractableState;
     }
 
     public void Disable()
     {
-        button.interactable = false;
+        lastInteractableState = false;
+        button.interactable = lastInteractableState;
+    }
+
+    internal void SetInteractable(bool interactable)
+    {
+        Image image = transform.Find("Image").GetComponent<Image>();
+        
+        if(interactable)
+        {
+            image.color = Color.white;
+            image.sprite = lastAppliedSprite;
+            button.interactable = lastInteractableState;
+        }
+
+        else
+        {
+            SetBorderColorSelected(false);
+            image.color = Color.grey;
+            image.sprite = null;
+            button.interactable = false;
+        }
+
     }
 }

@@ -48,4 +48,11 @@ public class TileManager : MonoBehaviour
         this[index].Disable();
     }
 
+    internal void SetTilesEnabled(bool enabled)
+    {
+        foreach(GameTile tile in gameTiles)
+        {
+            tile.SetInteractable(enabled);
+        }
+    }
 }
