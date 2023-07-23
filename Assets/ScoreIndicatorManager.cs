@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class ScoreIndicatorManager : MonoBehaviour
 {
-    [SerializeField] Sprite player1;
-    [SerializeField] Sprite player2;
+    [SerializeField] Sprite astronaut;
+    [SerializeField] Sprite alien;
     [SerializeField] Sprite tie;
     Dictionary<Player, int> roundScore;
     Dictionary<Player, Sprite> setSprites;
@@ -22,14 +22,14 @@ public class ScoreIndicatorManager : MonoBehaviour
         roundScore[Player.Alien] = 0;
         
         setSprites = new();
-        setSprites[Player.Astronaut] = player1;
-        setSprites[Player.Alien] = player2;
+        setSprites[Player.Astronaut] = astronaut;
+        setSprites[Player.Alien] = alien;
         setSprites[Player.Tie] = tie;
         currentSet = 0;
 
         roundScoreIndicators = new();
-        roundScoreIndicators[Player.Astronaut] = transform.Find("Round Indicators/Player 1 Score/Current").GetComponent<TextMeshProUGUI>();
-        roundScoreIndicators[Player.Alien] = transform.Find("Round Indicators/Player 2 Score/Current").GetComponent<TextMeshProUGUI>();
+        roundScoreIndicators[Player.Astronaut] = transform.Find("Round Indicators/Astronaut Score/Current").GetComponent<TextMeshProUGUI>();
+        roundScoreIndicators[Player.Alien] = transform.Find("Round Indicators/Alien Score/Current").GetComponent<TextMeshProUGUI>();
 
         setIndicators = new();
         foreach(Transform child in transform.Find("Set Indicators").transform)
@@ -48,7 +48,6 @@ public class ScoreIndicatorManager : MonoBehaviour
             roundScore[Player.Astronaut] = 0;
             roundScore[Player.Alien] = 0;
             WinSet(player);
-            // GameEvents.SetWon.Invoke();
         } 
     }
 

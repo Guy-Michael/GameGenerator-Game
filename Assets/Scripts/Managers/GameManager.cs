@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
         GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
         GameEvents.TurnEnded.AddListener(OnTurnEnded);
         GameEvents.GameWon.AddListener(OnGameWon);
-        GameEvents.RoundEnded.AddListener(OnRoundEnded);
+        GameEvents.RoundEnded.AddAsyncListener(OnRoundEnded);
     }
 
     private void InitializeGameTheme()
@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
         CheckForMatch();
     }
 
-    void CheckForMatch()
+    async void CheckForMatch()
     {
         if(lastSelectedLabelIndex == -1 || lastSelectedTileIndex == -1)
         {
@@ -179,9 +179,12 @@ public class GameManager : MonoBehaviour
         
         if(CheckForCurrentPlayerWin())
         {
-            GameEvents.RoundEnded.Invoke();
+            print("waiting for round");
+            await GameEvents.RoundEnded.Invoke();
+            print("finished round");
         }
 
+        print("invoking turn ended");
         GameEvents.TurnEnded.Invoke();
     }
 
@@ -201,7 +204,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private async void OnRoundEnded()
+    private async Task OnRoundEnded()
     {
         LineRenderer line = DrawLineRendererOnWinningTriplet();
         timerHandler.PauseTimer();

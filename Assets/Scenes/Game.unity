@@ -1292,8 +1292,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f6abcd018014c74182d05c81253b82c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player1: {fileID: 21300000, guid: a966ef628912f184d820232a8cdc4570, type: 3}
-  player2: {fileID: 21300000, guid: d6771a47c141ea349b5c6e1a22511c1d, type: 3}
+  astronaut: {fileID: 21300000, guid: d6771a47c141ea349b5c6e1a22511c1d, type: 3}
+  alien: {fileID: 21300000, guid: a966ef628912f184d820232a8cdc4570, type: 3}
   tie: {fileID: 21300000, guid: 57c40d8287ea36343a0a37f1e85bc127, type: 3}
 --- !u!1 &676599876
 GameObject:
@@ -4913,7 +4913,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1861929685}
   m_Layer: 5
-  m_Name: Player 2 Score
+  m_Name: Astronaut Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5588,7 +5588,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2131130836}
   m_Layer: 5
-  m_Name: Player 1 Score
+  m_Name: Alien Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
