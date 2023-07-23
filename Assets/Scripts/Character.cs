@@ -44,7 +44,6 @@ public class Character : MonoBehaviour
 
     public void SetActiveInGame(bool isActive)
     {
-        image.sprite = isActive ? active : idle; 
         image.color = isActive ? Color.white : NotSelectedTint;
     }
 

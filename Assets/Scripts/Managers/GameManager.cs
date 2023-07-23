@@ -81,6 +81,8 @@ public class GameManager : MonoBehaviour
 
         scoreManager = GameObject.Find("Score Indicators").GetComponent<ScoreIndicatorManager>();
         timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
+
+        GameGraphicsManager.SetActivePlayerTint(currentPlayer);
     }
 
     private void AddEventListeners()
@@ -254,6 +256,7 @@ public class GameManager : MonoBehaviour
         currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
         words[lastSelectedLabelIndex]?.SetLabelSelected(false);
         gameBoard[lastSelectedTileIndex]?.SetBorderColorSelected(false);
+        GameGraphicsManager.SetActivePlayerTint(currentPlayer);
 
         lastSelectedLabelIndex = -1;
         lastSelectedTileIndex = -1;

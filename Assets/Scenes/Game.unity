@@ -2329,6 +2329,22 @@ PrefabInstance:
       propertyPath: active
       value: 
       objectReference: {fileID: 21300000, guid: a90b5463b1edaf34aad4a4afd6a798a3, type: 3}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: NotSelectedTint.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: NotSelectedTint.b
+      value: 0.4716981
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: NotSelectedTint.g
+      value: 0.4716981
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: NotSelectedTint.r
+      value: 0.4716981
+      objectReference: {fileID: 0}
     - target: {fileID: 8069508352669609978, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: m_SizeDelta.x
       value: 500
@@ -6407,6 +6423,22 @@ PrefabInstance:
     - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: player
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: NotSelectedTint.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: NotSelectedTint.b
+      value: 0.47058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: NotSelectedTint.g
+      value: 0.47058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695391300557268758, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
+      propertyPath: NotSelectedTint.r
+      value: 0.47058824
       objectReference: {fileID: 0}
     - target: {fileID: 8069508352669609978, guid: b30f94702f0bd8e4cbd66eb1b9a3765a, type: 3}
       propertyPath: m_SizeDelta.x
