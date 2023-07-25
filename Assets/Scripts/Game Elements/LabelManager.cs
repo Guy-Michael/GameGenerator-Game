@@ -11,15 +11,15 @@ public class LabelManager : MonoBehaviour
 
     public GameLabel this[int index]
     {
-        get => (index >= 0) && index < gameLabels.Length ? gameLabels[index] : null;// throw new IndexOutOfRangeException($"There are {gameLabels.Length} label indices but index {index} was accessed.");
+        get => (index >= 0) && index < gameLabels.Length ? gameLabels[index] : null;
     }
 
     public void Init(Action<int> onLabelClickCallback)
     {
         this.gameLabels = GetComponentsInChildren<GameLabel>();
-        for(int i = 0; i < gameLabels.Length; i++)
+        foreach(GameLabel label in gameLabels)
         {
-            gameLabels[i].Init(i, onLabelClickCallback);
+            label.Init(onLabelClickCallback);
         }
     }
     
@@ -34,9 +34,6 @@ public class LabelManager : MonoBehaviour
 
         int remainingAmount = numberOfLabels - numberOfGameTiles;
         dataToUse.AddRange(additionalData[0..remainingAmount]);
-
-        //RANDOMNESS DISABLED. RETURN THIS!!
-        // dataToUse = dataToUse.OrderBy(s => UnityEngine.Random.value).ToList();
 
         for(int i = 0; i < dataToUse.Count; i++)
         {
@@ -53,6 +50,8 @@ public class LabelManager : MonoBehaviour
         {
             gameLabels[i].transform.SetSiblingIndex(indecies.ElementAt(i));
         }
+
+        this.gameLabels = GetComponentsInChildren<GameLabel>();
     }
 
     public void ResetAll()
@@ -65,7 +64,11 @@ public class LabelManager : MonoBehaviour
 
     public void DisableLabel(int index)
     {
-        this[index].Disable();
+        var list = gameLabels.ToList();
+        Destroy(list[index].gameObject);
+        list.RemoveAt(index);
+        gameLabels = list.ToArray();
+
     }
 
     public void SetLabelsEnabled(bool enabled)
