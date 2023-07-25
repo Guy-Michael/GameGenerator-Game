@@ -42,7 +42,7 @@ public class GameTile : MonoBehaviour
     public void SetBorderColorSelected(bool isSelected)
     {
         Image border = transform.Find("Border").GetComponent<Image>();
-        border.color = isSelected ? Color.magenta : Color.black;
+        border.color = isSelected ? Consts.ColorElementHighlight : Consts.ColorTileDefault;
     }
 
     public void SetPlayerThumbnail(Player player)

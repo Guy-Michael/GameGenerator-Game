@@ -36,7 +36,7 @@ public class GameLabel : MonoBehaviour
     public void SetLabelSelected(bool isSelected)
     {
         Image image = transform.Find("Label").GetComponent<Image>();
-        image.color = isSelected ? Color.magenta : Color.white;
+        image.color = isSelected ? Consts.ColorElementHighlight : Consts.ColorLabelDefault;
     }
 
     public void Reset()
