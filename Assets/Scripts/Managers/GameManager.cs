@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public static Player currentPlayer;
     int lastSelectedTileIndex;
     int lastSelectedLabelIndex;
+    [SerializeField] bool shuffleGameOnNewRound;
 
     void Start()
     {
@@ -241,6 +242,14 @@ public class GameManager : MonoBehaviour
         timerHandler.RestartTimer();
         spaceshipHandler.ResetTurnEndMessage();
         GameGraphicsManager.ResetPlayersSprites();
+
+        if(shuffleGameOnNewRound)
+        {
+            print("shuffeling");
+            words.Shuffle();
+            gameBoard.Shuffle();
+            // InitializeGameTheme();
+        }
     }
 
     private void SetupTurnEnded(bool keepTilesVisible)

@@ -42,6 +42,17 @@ public class LabelManager : MonoBehaviour
         {
             gameLabels[i].LoadContent(dataToUse[i]);
         }
+
+        Shuffle();
+    }
+
+    public void Shuffle()
+    {
+        IEnumerable<int> indecies = Enumerable.Range(0, gameLabels.Length).OrderBy(s => UnityEngine.Random.value);
+        for(int i = 0 ; i < gameLabels.Length; i++)
+        {
+            gameLabels[i].transform.SetSiblingIndex(indecies.ElementAt(i));
+        }
     }
 
     public void ResetAll()
