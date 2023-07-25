@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] int delayBetweenTurnsInMillis;
     Dictionary<Player, List<int>> correctMovesMadeInCurrentSet;
     GameLoader contentLoader;
-    TileManager gameBoard;
+    // TileManager gameBoard;
+    ElementManager elements;
     LabelManager words;
     ScoreIndicatorManager scoreManager;
     TimerHandler timerHandler;
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
     public static Player currentPlayer;
     int lastSelectedTileIndex;
     int lastSelectedLabelIndex;
+    [SerializeField] bool shuffleGameOnNewRound;
 
     void Start()
     {
@@ -70,8 +72,8 @@ public class GameManager : MonoBehaviour
 
     private void InitializeGameElements()
     {
-        gameBoard = GameObject.Find("Tiles").GetComponent<TileManager>();
-        gameBoard.InitTiles(OnTileClick);
+        elements = GameObject.Find("Tiles").GetComponent<ElementManager>();
+        elements.InitElements(OnTileClick);
 
         words = GameObject.Find("Labels").GetComponent<LabelManager>();
         words.Init(OnLabelClick);
@@ -105,7 +107,7 @@ public class GameManager : MonoBehaviour
     {
         if(lastSelectedTileIndex != -1)
         {
-            gameBoard[lastSelectedTileIndex].SetBorderColorSelected(false);
+            elements[lastSelectedTileIndex].SetBorderColorSelected(false);
         }
 
         lastSelectedTileIndex = tileIndex;
@@ -126,9 +128,9 @@ public class GameManager : MonoBehaviour
 
     private async void DevModeWin()
     {
-        gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
+        elements[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
         correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedTileIndex);
-        gameBoard.DisableTile(lastSelectedTileIndex);
+        elements.DisableElement(lastSelectedTileIndex);
         AnalyticsManager.IncrementScore(currentPlayer);
 
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
@@ -153,7 +155,7 @@ public class GameManager : MonoBehaviour
         } 
 
         string labelText = words[lastSelectedLabelIndex].Content;
-        string tileSpriteName = gameBoard[lastSelectedTileIndex].SpriteName;
+        string tileSpriteName = elements[lastSelectedTileIndex].SpriteName;
 
         bool isMoveCorrect = false;
         if(labelText.Equals(tileSpriteName))
@@ -167,7 +169,7 @@ public class GameManager : MonoBehaviour
             GameEvents.PlayerFailedMatch.Invoke();
         }
 
-        AnalyticsManager.RecordMove(currentPlayer, labelText, gameBoard[lastSelectedTileIndex].themeSprite, isMoveCorrect);
+        AnalyticsManager.RecordMove(currentPlayer, labelText, elements[lastSelectedTileIndex].themeSprite, isMoveCorrect);
         AnalyticsManager.IncrementPlaytime(currentPlayer);
         
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
@@ -187,10 +189,10 @@ public class GameManager : MonoBehaviour
     {
         spaceshipHandler.SetTurnEndMessage(true);
         GameGraphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Active);
-        gameBoard[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
+        elements[lastSelectedTileIndex].SetPlayerThumbnail(currentPlayer);
         correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedTileIndex);
         
-        gameBoard.DisableTile(lastSelectedTileIndex);
+        elements.DisableElement(lastSelectedTileIndex);
         words.DisableLabel(lastSelectedLabelIndex);
         
         AnalyticsManager.IncrementScore(currentPlayer);
@@ -211,7 +213,7 @@ public class GameManager : MonoBehaviour
     private async Task OnSetEnded()
     {
         (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
-        LineRenderer line = GameUtils.DrawLineRendererOnWinningTriplet(gameBoard, winningTriplet);
+        LineRenderer line = GameUtils.DrawLineRendererOnWinningTriplet(elements, winningTriplet);
         spaceshipHandler.DisplayWonMessage();
         SetupTurnEnded(true);
         
@@ -220,7 +222,7 @@ public class GameManager : MonoBehaviour
         SetupTurnStarted();
         Destroy(line);
         words.ResetAll();
-        gameBoard.ResetAll();
+        elements.ResetAll();
         correctMovesMadeInCurrentSet[Player.Astronaut].Clear();
         correctMovesMadeInCurrentSet[Player.Alien].Clear();
     }
@@ -235,17 +237,22 @@ public class GameManager : MonoBehaviour
     private void SetupTurnStarted()
     {
         SetControlsEnabled(true);
-        gameBoard.SetTilesEnabled(true);
+        elements.SetElementsEnabled(true);
         words.SetLabelsEnabled(true);
         spaceshipHandler.ToggleActivePlayer();
         timerHandler.RestartTimer();
         spaceshipHandler.ResetTurnEndMessage();
         GameGraphicsManager.ResetPlayersSprites();
+
+        if(shuffleGameOnNewRound)
+        {
+            words.Shuffle();
+        }
     }
 
     private void SetupTurnEnded(bool keepTilesVisible)
     {
-        gameBoard.SetTilesEnabled(keepTilesVisible);
+        elements.SetElementsEnabled(keepTilesVisible);
         SetControlsEnabled(false);
         words.SetLabelsEnabled(false);
         timerHandler.MakeTimerInvisible();
@@ -255,7 +262,7 @@ public class GameManager : MonoBehaviour
     {
         currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
         words[lastSelectedLabelIndex]?.SetLabelSelected(false);
-        gameBoard[lastSelectedTileIndex]?.SetBorderColorSelected(false);
+        elements[lastSelectedTileIndex]?.SetBorderColorSelected(false);
         GameGraphicsManager.SetActivePlayerTint(currentPlayer);
 
         lastSelectedLabelIndex = -1;
@@ -267,7 +274,7 @@ public class GameManager : MonoBehaviour
         if(enabled)
         {
             words.SetLabelsEnabled(enabled);
-            gameBoard.SetTilesEnabled(enabled);
+            elements.SetElementsEnabled(enabled);
         }
     }
 

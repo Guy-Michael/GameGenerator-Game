@@ -42,15 +42,16 @@ public class ScoreIndicatorManager : MonoBehaviour
 
     public void IncrementScore(Player player)
     {
-        roundScore[player]++;
-        roundScoreIndicators[player].text = roundScore[player].ToString();
+        WinSet(player.ToOutcome());
+        // roundScore[player]++;
+        // roundScoreIndicators[player].text = roundScore[player].ToString();
 
-        if(roundScore[player] >= 3)
-        {
-            roundScore[Player.Astronaut] = 0;
-            roundScore[Player.Alien] = 0;
-            WinSet(player.ToOutcome());
-        } 
+        // if(roundScore[player] >= 3)
+        // {
+        //     roundScore[Player.Astronaut] = 0;
+        //     roundScore[Player.Alien] = 0;
+        //     WinSet(player.ToOutcome());
+        // } 
     }
 
     private void WinSet(SetOutcome outcome)
@@ -62,7 +63,7 @@ public class ScoreIndicatorManager : MonoBehaviour
 
         currentSet++;
 
-        if(currentSet > 2)
+        if(currentSet >= 2)
         {
             InvokeGameWonEvent();
         }

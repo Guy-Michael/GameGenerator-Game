@@ -1,13 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public static class TextConsts
 {
-    public static Dictionary<Player, string> defaultPlayerNames;
-    public static string playerWonTurn = "תשובה נכונה!".Reverse();
-    public static string playerWonSet = "ניצחת בסיבוב הזה!".Reverse() +  "\n" + "עוד קצת ונחזור הביתה".Reverse();
-    public static string playerLostTurn = "לא נורא,".Reverse() + "\n" + "אולי בפעם הבאה!".Reverse();
+    public static Dictionary<Player, string> defaultPlayerNames;   
+    
+    public static class TurnFeedbackText
+    {
+        public static readonly string playerWonTurn = "תשובה נכונה!".Reverse();
+        public static readonly string playerWonSet = "ניצחת בסיבוב הזה!".Reverse() +  "\n" + "עוד קצת ונחזור הביתה".Reverse();
+        public static readonly string playerLostTurn =  "לא נורא,".Reverse() + "\n" + "אולי בפעם הבאה!".Reverse();
+    };
+
+    
+
 
     static TextConsts()
     {

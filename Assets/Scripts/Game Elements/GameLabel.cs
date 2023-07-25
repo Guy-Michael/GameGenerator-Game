@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -9,19 +7,17 @@ public class GameLabel : MonoBehaviour
 {
     Button button;
     TextMeshProUGUI text;
-    int index;
     string content;
     bool lastInteractableState;
 
     public string Content { get => content; }
 
-    public void Init(int index, Action<int> onLabelClick)
+    public void Init(Action<int> onLabelClick)
     {
-        this.index = index;
         text = GetComponentInChildren<TextMeshProUGUI>();
         button = GetComponentInChildren<Button>();
         button.onClick.AddListener(() => SetLabelSelected(true));
-        button.onClick.AddListener(() => onLabelClick(index));
+        button.onClick.AddListener(() => onLabelClick(transform.GetSiblingIndex()));
         lastInteractableState = true;
         button.interactable = lastInteractableState;
     }
@@ -36,7 +32,7 @@ public class GameLabel : MonoBehaviour
     public void SetLabelSelected(bool isSelected)
     {
         Image image = transform.Find("Label").GetComponent<Image>();
-        image.color = isSelected ? Color.magenta : Color.white;
+        image.color = isSelected ? Consts.ColorElementHighlight : Consts.ColorLabelDefault;
     }
 
     public void Reset()

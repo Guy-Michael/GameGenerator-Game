@@ -1,9 +1,30 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 public static class GameUtils
 {
     public static LineRenderer DrawLineRendererOnWinningTriplet(TileManager gameBoard, (int a, int b, int c) winningTriplet)
+    {
+        LineRenderer line = gameBoard.gameObject.AddComponent<LineRenderer>();
+        line.positionCount = 2;
+
+        Vector3 start = gameBoard[winningTriplet.a].transform.position;
+        start.z = 1;
+
+        Vector3 end = gameBoard[winningTriplet.c].transform.position;
+        end.z = 1;
+
+        line.SetPosition(0, start);
+        line.SetPosition(1, end);
+        line.startWidth = 0.1f;
+        line.endWidth = 0.1f;
+
+        return line;
+    }
+
+        public static LineRenderer DrawLineRendererOnWinningTriplet(ElementManager gameBoard, (int a, int b, int c) winningTriplet)
     {
         LineRenderer line = gameBoard.gameObject.AddComponent<LineRenderer>();
         line.positionCount = 2;
@@ -67,5 +88,18 @@ public static class GameUtils
         };
 
         return winningTriplets;
+    }
+
+    public static bool AssertHebewText(string text)
+    {
+        foreach(char c in text)
+        {
+            if(c >= 'א' && c <= 'ת')
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
