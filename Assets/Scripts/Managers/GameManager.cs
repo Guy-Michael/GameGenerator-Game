@@ -245,10 +245,7 @@ public class GameManager : MonoBehaviour
 
         if(shuffleGameOnNewRound)
         {
-            print("shuffeling");
             words.Shuffle();
-            gameBoard.Shuffle();
-            // InitializeGameTheme();
         }
     }
 
