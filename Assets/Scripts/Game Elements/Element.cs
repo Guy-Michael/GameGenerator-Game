@@ -4,8 +4,9 @@ using UnityEngine.UI;
 using UnityEngine;
 using System;
 using UnityEngine.Events;
+using TMPro;
 
-public class GameTile : MonoBehaviour
+public class Element : MonoBehaviour
 {
     Dictionary<Player, Sprite> winSprites;
     public Sprite themeSprite {get; private set;}
@@ -13,10 +14,10 @@ public class GameTile : MonoBehaviour
     private bool lastInteractableState;
     Image image;
     Button button;
-    int index;
+    GameObject label;
 
     public string SpriteName {get => image.sprite.name;}
-    public void LoadSprites(Sprite initialSprite, Dictionary<Player, Sprite> winSprites)
+    public void LoadSprites(Sprite initialSprite, Dictionary<Player, Sprite> winSprites, string content = "")
     {
         this.themeSprite = initialSprite;
 
@@ -24,19 +25,34 @@ public class GameTile : MonoBehaviour
         image.sprite = this.themeSprite;
         lastAppliedSprite = this.themeSprite;
         this.winSprites = winSprites;
+
+        label = transform.Find("Label").gameObject;
+        label.SetActive(false);
+        
+        if(!content.Equals(string.Empty))
+        {
+            InitLabel(content);
+        }
     }
 
-    public void Init(int index, Action<int> onClickCallback)
+    private void InitLabel(string content)
     {
-        this.index = index;
+        label.SetActive(true);
+        TextMeshProUGUI text = label.GetComponentInChildren<TextMeshProUGUI>();
+        if(GameUtils.AssertHebewText(content))
+        {
+            text.isRightToLeftText = true;
+        }
+        text.text = content;
+    }
 
+    public void Init(Action<int> onClickCallback)
+    {
         button = transform.Find("Image").GetComponent<Button>();
         button.onClick.AddListener(() => SetBorderColorSelected(true));
-        button.onClick.AddListener(() => onClickCallback(index));
+        button.onClick.AddListener(() => onClickCallback(transform.GetSiblingIndex()));
         lastInteractableState = true;
         button.interactable = lastInteractableState;
-        
-
     }
 
     public void SetBorderColorSelected(bool isSelected)
@@ -51,13 +67,14 @@ public class GameTile : MonoBehaviour
         image.sprite = lastAppliedSprite;
     }
 
-    public void ResetTile()
+    public void ResetElement()
     {
         SetBorderColorSelected(false);
         lastAppliedSprite = themeSprite;
         image.sprite = lastAppliedSprite;
         lastInteractableState = true;
         button.interactable = lastInteractableState;
+        label.SetActive(true);
     }
 
     public void Disable()
@@ -75,6 +92,8 @@ public class GameTile : MonoBehaviour
             image.color = Color.white;
             image.sprite = lastAppliedSprite;
             button.interactable = lastInteractableState;
+            
+            label.SetActive(true);
         }
 
         else
@@ -83,6 +102,8 @@ public class GameTile : MonoBehaviour
             image.color = Color.grey;
             image.sprite = null;
             button.interactable = false;
+            
+            label.SetActive(false);
         }
 
     }

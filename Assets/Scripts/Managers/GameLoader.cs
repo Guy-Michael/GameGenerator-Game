@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameLoader : MonoBehaviour
 {
     IAssetImporter assetImporter;
-    [SerializeField] TileManager gameBoard;
+    [SerializeField] ElementManager gameBoard;
     [SerializeField] LabelManager labelBoard;
 
     public void InitializeGameGraphics(IAssetImporter assetImporter)
@@ -16,7 +16,10 @@ public class GameLoader : MonoBehaviour
         Dictionary<Player, Sprite> winThumbnails = assetImporter.ImportWinThumbnails();
         string[] additionalData = assetImporter.ImportAdditionalLabels();
 
-        gameBoard.LoadSprites(assets.Values.ToArray(), winThumbnails);
+        
+
+
+        gameBoard.LoadSprites(assets.Values.ToArray(), winThumbnails, assets.Keys.ToArray());
         labelBoard.LoadContent(assets.Keys.ToArray(), additionalData);
     }
 }

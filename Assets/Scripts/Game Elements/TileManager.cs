@@ -26,7 +26,6 @@ public class TileManager : MonoBehaviour
         gameTiles = GetComponentsInChildren<GameTile>();
         //CHANGE THIS.
         int shorterArray = Mathf.Min(sprites.Length, gameTiles.Length);
-        // sprites = sprites.ToList().OrderBy(s => UnityEngine.Random.value).ToArray();
         
         for (int i = 0; i < shorterArray; i++)
         {
@@ -48,7 +47,7 @@ public class TileManager : MonoBehaviour
     {
         foreach(GameTile tile in gameTiles)
         {
-            tile.Reset();
+            tile.ResetTile();
         }
     }
 
