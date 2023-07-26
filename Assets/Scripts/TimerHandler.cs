@@ -25,7 +25,7 @@ public class TimerHandler : MonoBehaviour
     {
         if(timer == null || text == null || !timer.active) return;
 
-        string remainingTime = timer.RemainingTime.ToString("0");
+        string remainingTime = "0:" + timer.RemainingTime.ToString();
         text.text = remainingTime;
     }
 
