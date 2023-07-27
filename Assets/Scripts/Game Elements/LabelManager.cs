@@ -1,3 +1,4 @@
+using System.Reflection.Emit;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,19 +46,14 @@ public class LabelManager : MonoBehaviour
 
     public void Shuffle()
     {
+        List<GameLabel> activeLabels = gameLabels.Where(label => label.gameObject.activeInHierarchy).ToList();
+        List<Vector2> positions = activeLabels.Select(label => label.GetComponent<RectTransform>().anchoredPosition).ToList();
 
-        //get transform of all active labels.
-        //shuffle transforms
-        //apply transforms in new order.
-
-
-        // IEnumerable<int> indecies = Enumerable.Range(0, gameLabels.Length).OrderBy(s => UnityEngine.Random.value);
-        // for(int i = 0 ; i < gameLabels.Length; i++)
-        // {
-        //     gameLabels[i].transform.SetSiblingIndex(indecies.ElementAt(i));
-        // }
-
-        // this.gameLabels = GetComponentsInChildren<GameLabel>();
+        positions = positions.OrderBy((p) => UnityEngine.Random.value).ToList();
+        for(int i = 0; i < activeLabels.Count; i++)
+        {
+            activeLabels[i].GetComponent<RectTransform>().anchoredPosition = positions[i];
+        }
     }
 
     public void ResetAll()
@@ -71,13 +67,7 @@ public class LabelManager : MonoBehaviour
 
     public void DisableLabel(int index)
     {
-        
         gameLabels[index].gameObject.SetActive(false);
-        // var list = gameLabels.ToList();
-        // Destroy(list[index].gameObject);
-        // list.RemoveAt(index);
-        // gameLabels = list.ToArray();
-
     }
 
     public void SetLabelsEnabled(bool enabled)
