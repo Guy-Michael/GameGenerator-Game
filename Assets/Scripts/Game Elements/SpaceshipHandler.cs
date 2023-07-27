@@ -44,7 +44,7 @@ public class SpaceshipHandler : MonoBehaviour
 
     public void SetTurnEndMessage(bool hasWon)
     {
-        turnEndMessage.text = hasWon ? TextConsts.TurnFeedbackText.playerWonSet : TextConsts.TurnFeedbackText.playerLostTurn;
+        turnEndMessage.text = hasWon ? TextConsts.TurnFeedbackText.playerWonTurn : TextConsts.TurnFeedbackText.playerLostTurn;
     }
 
     public void ResetTurnEndMessage()

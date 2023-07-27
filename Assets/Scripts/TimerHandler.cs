@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -25,7 +26,9 @@ public class TimerHandler : MonoBehaviour
     {
         if(timer == null || text == null || !timer.active) return;
 
-        string remainingTime = "0:" + timer.RemainingTime.ToString();
+        TimeSpan timeSpan = TimeSpan.FromSeconds(timer.RemainingTime); 
+        string remainingTime = $"00:{timeSpan.Seconds.ToString().PadLeft(2, '0')}";
+        // string remainingTime = "0:" + timer.RemainingTime.ToString();
         text.text = remainingTime;
     }
 
@@ -52,6 +55,7 @@ public class TimerHandler : MonoBehaviour
 
     private async void InvokeTurnEndedEvent()
     {
+        GameEvents.PlayerFailedMatch.Invoke();
         await GameEvents.TurnEnded.Invoke();
     }
 }
