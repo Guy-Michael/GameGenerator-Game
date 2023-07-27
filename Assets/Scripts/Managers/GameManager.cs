@@ -181,8 +181,6 @@ public class GameManager : MonoBehaviour
         {
             await GameEvents.TurnEnded.Invoke();
         }
-
-        MoveControlToOtherPlayer();
     }
 
     private void OnPlayerGotMatch()
@@ -216,6 +214,7 @@ public class GameManager : MonoBehaviour
         LineRenderer line = GameUtils.DrawLineRendererOnWinningTriplet(elements, winningTriplet);
         spaceshipHandler.DisplayWonMessage();
         SetupTurnEnded(true);
+        MoveControlToOtherPlayer();
         
         await Task.Delay(delayBetweenTurnsInMillis);
 
@@ -232,6 +231,7 @@ public class GameManager : MonoBehaviour
         SetupTurnEnded(false);
         await Task.Delay(delayBetweenTurnsInMillis);
         SetupTurnStarted();
+        MoveControlToOtherPlayer();
     }
 
     private void SetupTurnStarted()

@@ -55,6 +55,7 @@ public class TimerHandler : MonoBehaviour
 
     private async void InvokeTurnEndedEvent()
     {
+        GameEvents.PlayerFailedMatch.Invoke();
         await GameEvents.TurnEnded.Invoke();
     }
 }

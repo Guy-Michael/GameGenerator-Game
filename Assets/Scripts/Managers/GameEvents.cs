@@ -41,6 +41,10 @@ public class UnityEventAsync: UnityEvent
         }
 
         await Task.WhenAll(tasks);
+        for(int i = 0; i < GetPersistentEventCount(); i++)
+        {
+            Debug.Log(GetPersistentMethodName(i));
+        }
         base.Invoke();
     }
 }
