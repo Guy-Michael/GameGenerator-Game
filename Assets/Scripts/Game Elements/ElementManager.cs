@@ -11,7 +11,7 @@ public class ElementManager : MonoBehaviour
         get => (index >= 0) && index < gameElements.Length ? gameElements[index] : null;
     }
 
-    public void InitElements(Action<int> onClickCallback)
+    public void InitElements(Action<Element> onClickCallback)
     {
         gameElements = GetComponentsInChildren<Element>();
 

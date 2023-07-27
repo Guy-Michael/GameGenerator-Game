@@ -14,7 +14,7 @@ public class LabelManager : MonoBehaviour
         get => (index >= 0) && index < gameLabels.Length ? gameLabels[index] : null;
     }
 
-    public void Init(Action<int> onLabelClickCallback)
+    public void Init(Action<GameLabel> onLabelClickCallback)
     {
         this.gameLabels = GetComponentsInChildren<GameLabel>();
         foreach(GameLabel label in gameLabels)
@@ -45,29 +45,38 @@ public class LabelManager : MonoBehaviour
 
     public void Shuffle()
     {
-        IEnumerable<int> indecies = Enumerable.Range(0, gameLabels.Length).OrderBy(s => UnityEngine.Random.value);
-        for(int i = 0 ; i < gameLabels.Length; i++)
-        {
-            gameLabels[i].transform.SetSiblingIndex(indecies.ElementAt(i));
-        }
 
-        this.gameLabels = GetComponentsInChildren<GameLabel>();
+        //get transform of all active labels.
+        //shuffle transforms
+        //apply transforms in new order.
+
+
+        // IEnumerable<int> indecies = Enumerable.Range(0, gameLabels.Length).OrderBy(s => UnityEngine.Random.value);
+        // for(int i = 0 ; i < gameLabels.Length; i++)
+        // {
+        //     gameLabels[i].transform.SetSiblingIndex(indecies.ElementAt(i));
+        // }
+
+        // this.gameLabels = GetComponentsInChildren<GameLabel>();
     }
 
     public void ResetAll()
     {
         foreach(GameLabel label in gameLabels)
         {
+            label.gameObject.SetActive(true);
             label.Reset();
         }
     }
 
     public void DisableLabel(int index)
     {
-        var list = gameLabels.ToList();
-        Destroy(list[index].gameObject);
-        list.RemoveAt(index);
-        gameLabels = list.ToArray();
+        
+        gameLabels[index].gameObject.SetActive(false);
+        // var list = gameLabels.ToList();
+        // Destroy(list[index].gameObject);
+        // list.RemoveAt(index);
+        // gameLabels = list.ToArray();
 
     }
 

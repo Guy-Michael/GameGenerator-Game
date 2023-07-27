@@ -12,12 +12,12 @@ public class GameLabel : MonoBehaviour
 
     public string Content { get => content; }
 
-    public void Init(Action<int> onLabelClick)
+    public void Init(Action<GameLabel> onLabelClick)
     {
         text = GetComponentInChildren<TextMeshProUGUI>();
         button = GetComponentInChildren<Button>();
         button.onClick.AddListener(() => SetLabelSelected(true));
-        button.onClick.AddListener(() => onLabelClick(transform.GetSiblingIndex()));
+        button.onClick.AddListener(() => onLabelClick(this));
         lastInteractableState = true;
         button.interactable = lastInteractableState;
     }

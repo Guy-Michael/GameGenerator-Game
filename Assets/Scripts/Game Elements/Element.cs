@@ -46,11 +46,11 @@ public class Element : MonoBehaviour
         text.text = content;
     }
 
-    public void Init(Action<int> onClickCallback)
+    public void Init(Action<Element> onClickCallback)
     {
         button = transform.Find("Image").GetComponent<Button>();
         button.onClick.AddListener(() => SetBorderColorSelected(true));
-        button.onClick.AddListener(() => onClickCallback(transform.GetSiblingIndex()));
+        button.onClick.AddListener(() => onClickCallback(this));
         lastInteractableState = true;
         button.interactable = lastInteractableState;
     }
