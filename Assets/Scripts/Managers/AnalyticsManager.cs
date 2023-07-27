@@ -26,10 +26,14 @@ public static class AnalyticsManager
     static AnalyticsManager()
     {
         PlayerAnalytics temp = new();
-        temp.moves = new();
 
         analytics = new();
+
+        //temp.moves is instantiated twice so both lists have unique object pointers.
+        temp.moves = new();
         analytics.Add(Player.Astronaut, temp);
+        
+        temp.moves = new();
         analytics.Add(Player.Alien, temp);
 
         SetPlayerName(Player.Astronaut, TextConsts.defaultPlayerNames[Player.Astronaut]);
