@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Character : MonoBehaviour
 {
-    [SerializeField] Player player;
+    [SerializeField] public Player player;
     [SerializeField] Sprite active;
     [SerializeField] Sprite idle;
     [SerializeField] Sprite lost;
