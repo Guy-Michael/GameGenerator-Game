@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -9,54 +7,36 @@ using UnityEngine.UI;
 
 public class ScoreIndicatorManager : MonoBehaviour
 {
-    [SerializeField] Sprite astronaut;
-    [SerializeField] Sprite alien;
+    [SerializeField] Sprite winSprite;
     [SerializeField] Sprite tie;
-    Dictionary<Player, int> roundScore;
-    Dictionary<SetOutcome, Sprite> setSprites;
-    Dictionary<Player, TextMeshProUGUI> roundScoreIndicators;
     List<Image> setIndicators;
+    Player player;
     int currentSet;
-    void Start()
+    
+    public void Init()
     {
-        roundScore = new();
-        roundScore[Player.Astronaut] = 0;
-        roundScore[Player.Alien] = 0;
-        
-        setSprites = new();
-        setSprites[SetOutcome.AstronautWin] = astronaut;
-        setSprites[SetOutcome.AlienWin] = alien;
-        setSprites[SetOutcome.Tie] = tie;
+        player = GetComponentInParent<Character>().player;
         currentSet = 0;
 
-        roundScoreIndicators = new();
-        roundScoreIndicators[Player.Astronaut] = transform.Find("Round Indicators/Astronaut Score/Current").GetComponent<TextMeshProUGUI>();
-        roundScoreIndicators[Player.Alien] = transform.Find("Round Indicators/Alien Score/Current").GetComponent<TextMeshProUGUI>();
-
         setIndicators = new();
-        foreach(Transform child in transform.Find("Set Indicators").transform)
+        foreach(Transform child in transform)
         {
             setIndicators.Add(child.transform.Find("Image").GetComponent<Image>());
         }
     }
 
-    public void IncrementScore(Player player)
+    public void IncrementScore(SetOutcome outcome)
     {
-        WinSet(player.ToOutcome());
-        // roundScore[player]++;
-        // roundScoreIndicators[player].text = roundScore[player].ToString();
+        if(outcome == SetOutcome.Tie)
+        {
+            setIndicators[currentSet].sprite = tie;
+        }
 
-        // if(roundScore[player] >= 3)
-        // {
-        //     roundScore[Player.Astronaut] = 0;
-        //     roundScore[Player.Alien] = 0;
-        //     WinSet(player.ToOutcome());
-        // } 
-    }
+        else if(outcome == player.ToOutcome())
+        {
+            setIndicators[currentSet].sprite = winSprite;
+        }
 
-    private void WinSet(SetOutcome outcome)
-    {
-        setIndicators[currentSet].sprite = setSprites[outcome];
         Color color = setIndicators[currentSet].color;
         color.a = 255;
         setIndicators[currentSet].color = color;
@@ -67,10 +47,35 @@ public class ScoreIndicatorManager : MonoBehaviour
         {
             InvokeGameWonEvent();
         }
+    
+        
     }
-
+    
     private void InvokeGameWonEvent()
     {
         GameEvents.GameWon.Invoke();
     }
+
+
+
+    // public void IncrementScore(Player player)
+    // {
+    //     WinSet(player.ToOutcome());
+    // }
+
+    // private void WinSet(SetOutcome outcome)
+    // {
+    //     setIndicators[currentSet].sprite = setSprites[outcome];
+    //     Color color = setIndicators[currentSet].color;
+    //     color.a = 255;
+    //     setIndicators[currentSet].color = color;
+
+    //     currentSet++;
+
+    //     if(currentSet >= 2)
+    //     {
+    //         InvokeGameWonEvent();
+    //     }
+    // }
+
 }

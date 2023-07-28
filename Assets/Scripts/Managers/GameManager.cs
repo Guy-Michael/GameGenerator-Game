@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     GameLoader contentLoader;
     ElementManager elements;
     LabelManager words;
-    ScoreIndicatorManager scoreManager;
+    Dictionary<Player, ScoreIndicatorManager> scoreManagers;
     TimerHandler timerHandler;
     SpaceshipHandler spaceshipHandler;
     public static Player currentPlayer;
@@ -77,7 +77,16 @@ public class GameManager : MonoBehaviour
         spaceshipHandler = GameObject.Find("Spaceship").GetComponent<SpaceshipHandler>();
         spaceshipHandler.SetActivePlayer(currentPlayer);
 
-        scoreManager = GameObject.Find("Score Indicators").GetComponent<ScoreIndicatorManager>();
+        scoreManagers = new();
+
+        ScoreIndicatorManager astronautScore = GameObject.Find("Astronaut/Set Indicators").GetComponent<ScoreIndicatorManager>();
+        astronautScore.Init();
+        scoreManagers[Player.Astronaut] = astronautScore;
+
+        ScoreIndicatorManager alienScore = GameObject.Find("Alien/Set Indicators").GetComponent<ScoreIndicatorManager>();
+        alienScore.Init();
+        scoreManagers[Player.Alien] = alienScore;
+
         timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
 
         GameGraphicsManager.SetActivePlayerTint(currentPlayer);
@@ -132,7 +141,7 @@ public class GameManager : MonoBehaviour
 
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
-            scoreManager.IncrementScore(currentPlayer);
+            scoreManagers[currentPlayer].IncrementScore(currentPlayer.ToOutcome());
             await GameEvents.SetEnded.Invoke();
         }
 
@@ -198,7 +207,7 @@ public class GameManager : MonoBehaviour
 
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
-            scoreManager.IncrementScore(currentPlayer);
+            scoreManagers[currentPlayer].IncrementScore(currentPlayer.ToOutcome());
         }
     }
 
@@ -262,7 +271,7 @@ public class GameManager : MonoBehaviour
     private void MoveControlToOtherPlayer()
     {
         currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
-        lastSelectedLabel.SetLabelSelected(false);
+        lastSelectedLabel?.SetLabelSelected(false);
         lastSelectedTile?.SetBorderColorSelected(false);
         GameGraphicsManager.SetActivePlayerTint(currentPlayer);
 
