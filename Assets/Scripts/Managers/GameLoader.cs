@@ -6,8 +6,8 @@ using UnityEngine;
 public class GameLoader : MonoBehaviour
 {
     IAssetImporter assetImporter;
-    [SerializeField] ElementManager gameBoard;
-    [SerializeField] LabelManager labelBoard;
+    [SerializeField] BoardElementManager gameBoard;
+    [SerializeField] PoolElementManager pool;
 
     public void InitializeGameGraphics(IAssetImporter assetImporter)
     {
@@ -20,6 +20,6 @@ public class GameLoader : MonoBehaviour
 
 
         gameBoard.LoadSprites(assets.Values.ToArray(), winThumbnails, assets.Keys.ToArray());
-        labelBoard.LoadContent(assets.Keys.ToArray(), additionalData);
+        pool.LoadSprites(assets.Values.ToArray(), winThumbnails);
     }
 }

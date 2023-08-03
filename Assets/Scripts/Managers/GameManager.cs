@@ -10,14 +10,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] int delayBetweenTurnsInMillis;
     Dictionary<Player, List<int>> correctMovesMadeInCurrentSet;
     GameLoader contentLoader;
-    ElementManager elements;
-    LabelManager words;
+    BoardElementManager elements;
+    PoolElementManager words;
     Dictionary<Player, ScoreIndicatorManager> scoreManagers;
     TimerHandler timerHandler;
     SpaceshipHandler spaceshipHandler;
     public static Player currentPlayer;
-    Element lastSelectedTile;
-    GameLabel lastSelectedLabel;
+    BoardElement lastSelectedBoardElement;
+    PoolElement lastSelectedPoolElement;
     [SerializeField] bool shuffleGameOnNewRound;
 
     void Start()
@@ -68,11 +68,11 @@ public class GameManager : MonoBehaviour
 
     private void InitializeGameElements()
     {
-        elements = GameObject.Find("Tiles").GetComponent<ElementManager>();
+        elements = GameObject.Find("Board").GetComponentInChildren<BoardElementManager>();
         elements.InitElements(OnTileClick);
 
-        words = GameObject.Find("Labels").GetComponent<LabelManager>();
-        words.Init(OnLabelClick);
+        words = GameObject.Find("Pool").GetComponentInChildren<PoolElementManager>();
+        words.InitElements(OnPoolElementClick);
 
         spaceshipHandler = GameObject.Find("Spaceship").GetComponent<SpaceshipHandler>();
         spaceshipHandler.SetActivePlayer(currentPlayer);
@@ -108,35 +108,35 @@ public class GameManager : MonoBehaviour
         contentLoader.InitializeGameGraphics(importer);
     }
 
-    void OnTileClick(Element element)
+    void OnTileClick(BoardElement element)
     {
-        if(lastSelectedTile != null)
+        if(lastSelectedBoardElement != null)
         {
-            lastSelectedTile.SetBorderColorSelected(false);
+            lastSelectedBoardElement.SetBorderColorSelected(false);
         }
 
-        lastSelectedTile = element;
+        lastSelectedBoardElement = element;
         
         if(!devMode) CheckForMatch();
         if(devMode) DevModeWin();
     }
 
-   void OnLabelClick(GameLabel label)
+   void OnPoolElementClick(PoolElement element)
     {
-        if(lastSelectedLabel != null)
+        if(lastSelectedPoolElement != null)
         {
-            lastSelectedLabel.SetLabelSelected(false);
+            lastSelectedPoolElement.SetBorderColorSelected(false);
         }
 
-        lastSelectedLabel = label;
+        lastSelectedPoolElement = element;
         CheckForMatch();
     }
 
     private async void DevModeWin()
     {
-        lastSelectedTile.SetPlayerThumbnail(currentPlayer);
-        correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedTile.transform.GetSiblingIndex());
-        lastSelectedTile.Disable();
+        lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
+        correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
+        lastSelectedBoardElement.Disable();
         AnalyticsManager.IncrementScore(currentPlayer);
 
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
@@ -155,16 +155,15 @@ public class GameManager : MonoBehaviour
 
     async void CheckForMatch()
     {
-        if(lastSelectedLabel == null || lastSelectedTile == null)
+        if(lastSelectedPoolElement == null || lastSelectedBoardElement == null)
         {
             return;
         } 
 
-        string labelText = lastSelectedLabel.Content;
-        string tileSpriteName = lastSelectedTile.SpriteName;
-
+        string poolMatchingContent = lastSelectedPoolElement.MatchingContent;
+        string boardMatchingContent = lastSelectedBoardElement.MatchingContent;
         bool isMoveCorrect = false;
-        if(labelText.Equals(tileSpriteName))
+        if(poolMatchingContent.Equals(boardMatchingContent))
         {
             isMoveCorrect = true;
             GameEvents.PlayerGotMatch.Invoke();
@@ -175,9 +174,9 @@ public class GameManager : MonoBehaviour
             GameEvents.PlayerFailedMatch.Invoke();
         }
 
-        AnalyticsManager.RecordMove(currentPlayer, labelText, lastSelectedTile.themeSprite, isMoveCorrect);
+        AnalyticsManager.RecordMove(currentPlayer, poolMatchingContent, lastSelectedBoardElement.themeSprite, isMoveCorrect);
         AnalyticsManager.IncrementPlaytime(currentPlayer);
-        
+
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
             await GameEvents.SetEnded.Invoke();
@@ -195,13 +194,13 @@ public class GameManager : MonoBehaviour
         GameGraphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Active);
         
         
-        lastSelectedTile?.SetPlayerThumbnail(currentPlayer);
+        lastSelectedBoardElement?.SetPlayerThumbnail(currentPlayer);
 
         
-        correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedTile.transform.GetSiblingIndex());
+        correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
         
-        lastSelectedTile.Disable();
-        lastSelectedLabel.gameObject.SetActive(false);
+        lastSelectedBoardElement.Disable();
+        lastSelectedPoolElement.gameObject.SetActive(false);
         
         AnalyticsManager.IncrementScore(currentPlayer);
 
@@ -248,7 +247,7 @@ public class GameManager : MonoBehaviour
     {
         SetControlsEnabled(true);
         elements.SetElementsEnabled(true);
-        words.SetLabelsEnabled(true);
+        words.SetElementsEnabled(true);
         spaceshipHandler.ToggleActivePlayer();
         timerHandler.RestartTimer();
         spaceshipHandler.ResetTurnEndMessage();
@@ -264,26 +263,26 @@ public class GameManager : MonoBehaviour
     {
         elements.SetElementsEnabled(keepTilesVisible);
         SetControlsEnabled(false);
-        words.SetLabelsEnabled(false);
+        words.SetElementsEnabled(false);
         timerHandler.MakeTimerInvisible();
     }
 
     private void MoveControlToOtherPlayer()
     {
         currentPlayer = (Player)(((int)currentPlayer + 1) % 2);
-        lastSelectedLabel?.SetLabelSelected(false);
-        lastSelectedTile?.SetBorderColorSelected(false);
+        lastSelectedPoolElement?.SetBorderColorSelected(false);
+        lastSelectedBoardElement?.SetBorderColorSelected(false);
         GameGraphicsManager.SetActivePlayerTint(currentPlayer);
 
-        lastSelectedLabel = null;        
-        lastSelectedTile = null;
+        lastSelectedPoolElement = null;        
+        lastSelectedBoardElement = null;
     }
 
     private void SetControlsEnabled(bool enabled)
     {
         if(enabled)
         {
-            words.SetLabelsEnabled(enabled);
+            words.SetElementsEnabled(enabled);
             elements.SetElementsEnabled(enabled);
         }
     }

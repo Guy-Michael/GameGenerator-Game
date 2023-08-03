@@ -24,7 +24,7 @@ public static class GameUtils
         return line;
     }
 
-        public static LineRenderer DrawLineRendererOnWinningTriplet(ElementManager gameBoard, (int a, int b, int c) winningTriplet)
+        public static LineRenderer DrawLineRendererOnWinningTriplet(BoardElementManager gameBoard, (int a, int b, int c) winningTriplet)
     {
         LineRenderer line = gameBoard.gameObject.AddComponent<LineRenderer>();
         line.positionCount = 2;
