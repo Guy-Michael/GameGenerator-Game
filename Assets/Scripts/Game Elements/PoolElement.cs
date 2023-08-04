@@ -57,6 +57,12 @@ public class PoolElement : MonoBehaviour
         Image border = transform.Find("Border").GetComponent<Image>();
         border.color = isSelected ? Consts.ColorElementHighlight : Consts.ColorTileDefault;
     }
+    
+    public void SetBorderColorOnMatch(bool isCorrect)
+    {
+        Image border = transform.Find("Border").GetComponent<Image>();
+        border.color = isCorrect ? Consts.ColorLabelRight : Consts.ColorLabelWrong;
+    }
 
     public void SetPlayerThumbnail(Player player)
     {
@@ -79,12 +85,18 @@ public class PoolElement : MonoBehaviour
         button.interactable = lastInteractableState;
     }
 
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
     internal void SetInteractable(bool interactable)
     {
         Image image = transform.Find("Image").GetComponent<Image>();
         
         if(interactable)
         {
+            SetBorderColorSelected(false);  //To remove correct \ wrong match border colors
             image.color = Color.white;
             image.sprite = lastAppliedSprite;
             button.interactable = lastInteractableState;
@@ -92,7 +104,6 @@ public class PoolElement : MonoBehaviour
 
         else
         {
-            SetBorderColorSelected(false);
             image.color = Color.grey;
             image.sprite = null;
             button.interactable = false;

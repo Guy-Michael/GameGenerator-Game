@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using UnityEngine.UI;
+using System.Collections;
 
 public class PoolElementManager : MonoBehaviour
 {
@@ -47,9 +49,18 @@ public class PoolElementManager : MonoBehaviour
     public void Shuffle()
     {
         IEnumerable<int> indecies = Enumerable.Range(0, gameElements.Length).OrderBy(s => UnityEngine.Random.value);
+        GetComponent<GridLayoutGroup>().enabled = true;
         for(int i = 0 ; i < gameElements.Length; i++)
         {
             gameElements[i].transform.SetSiblingIndex(indecies.ElementAt(i));
+        }
+
+        StartCoroutine(TurnOfGridLayout());
+
+        IEnumerator TurnOfGridLayout()
+        {
+            yield return null;
+            GetComponent<GridLayoutGroup>().enabled = false;
         }
     }
 
@@ -58,6 +69,7 @@ public class PoolElementManager : MonoBehaviour
     {
         foreach(PoolElement element in gameElements)
         {
+            element.gameObject.SetActive(true);
             element.ResetElement();
         }
     }

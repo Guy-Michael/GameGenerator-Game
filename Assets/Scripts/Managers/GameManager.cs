@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] bool devMode;
-    [SerializeField] int delayBetweenTurnsInMillis;
     Dictionary<Player, List<int>> correctMovesMadeInCurrentSet;
     GameLoader contentLoader;
-    BoardElementManager elements;
-    PoolElementManager words;
+    BoardElementManager board;
+    PoolElementManager pool;
     Dictionary<Player, ScoreIndicatorManager> scoreManagers;
     TimerHandler timerHandler;
     SpaceshipHandler spaceshipHandler;
@@ -19,6 +18,8 @@ public class GameManager : MonoBehaviour
     BoardElement lastSelectedBoardElement;
     PoolElement lastSelectedPoolElement;
     [SerializeField] bool shuffleGameOnNewRound;
+    bool hasSetJustEnded;
+    bool hasJustMadeCorrectMatch;
 
     void Start()
     {
@@ -70,13 +71,14 @@ public class GameManager : MonoBehaviour
 
     private void InitializeGameElements()
     {
-        elements = GameObject.Find("Board").GetComponentInChildren<BoardElementManager>();
-        elements.InitElements(OnTileClick);
+        board = GameObject.Find("Board").GetComponentInChildren<BoardElementManager>();
+        board.InitElements(OnTileClick);
 
-        words = GameObject.Find("Pool").GetComponentInChildren<PoolElementManager>();
-        words.InitElements(OnPoolElementClick);
+        pool = GameObject.Find("Pool").GetComponentInChildren<PoolElementManager>();
+        pool.InitElements(OnPoolElementClick);
 
         spaceshipHandler = GameObject.Find("Spaceship").GetComponent<SpaceshipHandler>();
+        spaceshipHandler.Init(SetupTurnStarted);
         spaceshipHandler.SetActivePlayer(currentPlayer);
 
         scoreManagers = new();
@@ -98,9 +100,9 @@ public class GameManager : MonoBehaviour
     {
         GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
         GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
-        GameEvents.TurnEnded.AddAsyncListener(OnTurnEnded);
+        GameEvents.TurnEnded.AddListener(OnTurnEnded);
         GameEvents.GameWon.AddListener(OnGameWon);
-        GameEvents.SetEnded.AddAsyncListener(OnSetEnded);
+        GameEvents.SetEnded.AddListener(OnSetEnded);
     }
 
     private void InitializeGameTheme()
@@ -112,11 +114,7 @@ public class GameManager : MonoBehaviour
 
     void OnTileClick(BoardElement element)
     {
-        if(lastSelectedBoardElement != null)
-        {
-            lastSelectedBoardElement.SetBorderColorSelected(false);
-        }
-
+        lastSelectedBoardElement?.SetBorderColorSelected(false);
         lastSelectedBoardElement = element;
         
         if(!devMode) CheckForMatch();
@@ -131,7 +129,7 @@ public class GameManager : MonoBehaviour
         CheckForMatch();
     }
 
-    private async void DevModeWin()
+    private void DevModeWin()
     {
         lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
         correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
@@ -141,18 +139,18 @@ public class GameManager : MonoBehaviour
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
             scoreManagers[currentPlayer].IncrementScore(currentPlayer.ToOutcome());
-            await GameEvents.SetEnded.Invoke();
+            GameEvents.SetEnded.Invoke();
         }
 
         else
         {
-            await GameEvents.TurnEnded.Invoke();
+            GameEvents.TurnEnded.Invoke();
         }
 
         MoveControlToOtherPlayer();
     }
 
-    async void CheckForMatch()
+    void CheckForMatch()
     {
         if(lastSelectedPoolElement == null || lastSelectedBoardElement == null)
         {
@@ -161,10 +159,10 @@ public class GameManager : MonoBehaviour
 
         string poolMatchingContent = lastSelectedPoolElement.MatchingContent;
         string boardMatchingContent = lastSelectedBoardElement.MatchingContent;
-        bool isMoveCorrect = false;
+        hasJustMadeCorrectMatch = false;
         if(poolMatchingContent.Equals(boardMatchingContent))
         {
-            isMoveCorrect = true;
+            hasJustMadeCorrectMatch = true;
             GameEvents.PlayerGotMatch.Invoke();
         }
 
@@ -173,17 +171,17 @@ public class GameManager : MonoBehaviour
             GameEvents.PlayerFailedMatch.Invoke();
         }
 
-        AnalyticsManager.RecordMove(currentPlayer, poolMatchingContent, lastSelectedBoardElement.themeSprite, isMoveCorrect);
+        AnalyticsManager.RecordMove(currentPlayer, poolMatchingContent, lastSelectedBoardElement.themeSprite, hasJustMadeCorrectMatch);
         AnalyticsManager.IncrementPlaytime(currentPlayer);
 
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
-            await GameEvents.SetEnded.Invoke();
+            GameEvents.SetEnded.Invoke();
         }
 
         else
         {
-            await GameEvents.TurnEnded.Invoke();
+            GameEvents.TurnEnded.Invoke();
         }
     }
 
@@ -191,15 +189,11 @@ public class GameManager : MonoBehaviour
     {
         spaceshipHandler.SetTurnEndMessage(true);
         GameGraphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Active);
-        
-        
-        lastSelectedBoardElement?.SetPlayerThumbnail(currentPlayer);
 
-        
         correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
         
-        lastSelectedBoardElement.Disable();
-        lastSelectedPoolElement.gameObject.SetActive(false);
+        lastSelectedBoardElement.SetMatchFeedback(true);
+        lastSelectedPoolElement.SetBorderColorOnMatch(true);
         
         AnalyticsManager.IncrementScore(currentPlayer);
 
@@ -211,59 +205,71 @@ public class GameManager : MonoBehaviour
 
     private void OnPlayerFailedMatch()
     {
+        lastSelectedBoardElement.SetMatchFeedback(false);
+        lastSelectedPoolElement.SetBorderColorOnMatch(false);
         spaceshipHandler.SetTurnEndMessage(false);
         GameGraphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Lost);
         AnalyticsManager.IncrementNumberOfMistakes(currentPlayer);
     }
 
-    private async Task OnSetEnded()
+    private void OnSetEnded()
     {
         (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
-        LineRenderer line = GameUtils.DrawLineRendererOnWinningTriplet(elements, winningTriplet);
+        GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
+        lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
         spaceshipHandler.DisplayWonMessage();
+        hasSetJustEnded = true;
         SetupTurnEnded(true);
-        MoveControlToOtherPlayer();
-        
-        await Task.Delay(delayBetweenTurnsInMillis);
-
-        SetupTurnStarted();
-        Destroy(line);
-        words.ResetAll();
-        elements.ResetAll();
-        correctMovesMadeInCurrentSet[Player.Astronaut].Clear();
-        correctMovesMadeInCurrentSet[Player.Alien].Clear();
     }
 
-    private async Task OnTurnEnded()
+    private void OnTurnEnded()
     {
         SetupTurnEnded(false);
-        await Task.Delay(delayBetweenTurnsInMillis);
-        SetupTurnStarted();
-        MoveControlToOtherPlayer();
     }
 
     private void SetupTurnStarted()
     {
         SetControlsEnabled(true);
-        elements.SetElementsEnabled(true);
-        words.SetElementsEnabled(true);
+        board.SetElementsEnabled(true);
+        pool.SetElementsEnabled(true);
         spaceshipHandler.ToggleActivePlayer();
         timerHandler.RestartTimer();
         spaceshipHandler.ResetTurnEndMessage();
+        spaceshipHandler.SetContinueButtonVisible(false);
         GameGraphicsManager.ResetPlayersSprites();
 
-        if(shuffleGameOnNewRound)
+        if(hasJustMadeCorrectMatch)
         {
-            words.Shuffle();
+            lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
+            lastSelectedPoolElement.Hide();
+            hasJustMadeCorrectMatch = false;
         }
+
+        if(hasSetJustEnded)
+        {
+            pool.Shuffle();
+            GameUtils.DestroyLineRenderer();
+            pool.ResetAll();
+            board.ResetAll();
+            correctMovesMadeInCurrentSet[Player.Astronaut].Clear();
+            correctMovesMadeInCurrentSet[Player.Alien].Clear();
+
+            hasSetJustEnded = false;
+        }
+
+        lastSelectedPoolElement = null;
+        lastSelectedBoardElement = null;
+
+        MoveControlToOtherPlayer();
     }
 
     private void SetupTurnEnded(bool keepTilesVisible)
     {
-        elements.SetElementsEnabled(keepTilesVisible);
+        board.SetElementsEnabled(keepTilesVisible);
+        spaceshipHandler.SetContinueButtonVisible(true);
         SetControlsEnabled(false);
-        words.SetElementsEnabled(false);
-        timerHandler.MakeTimerInvisible();
+        pool.SetElementsEnabled(false);
+        timerHandler.HideTimer();
     }
 
     private void MoveControlToOtherPlayer()
@@ -272,17 +278,14 @@ public class GameManager : MonoBehaviour
         lastSelectedPoolElement?.SetBorderColorSelected(false);
         lastSelectedBoardElement?.SetBorderColorSelected(false);
         GameGraphicsManager.SetActivePlayerTint(currentPlayer);
-
-        lastSelectedPoolElement = null;        
-        lastSelectedBoardElement = null;
     }
 
     private void SetControlsEnabled(bool enabled)
     {
         if(enabled)
         {
-            words.SetElementsEnabled(enabled);
-            elements.SetElementsEnabled(enabled);
+            pool.SetElementsEnabled(enabled);
+            board.SetElementsEnabled(enabled);
         }
     }
 
