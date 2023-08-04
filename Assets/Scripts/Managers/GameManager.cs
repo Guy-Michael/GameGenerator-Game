@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] int delayBetweenTurnsInMillis;
     Dictionary<Player, List<int>> correctMovesMadeInCurrentSet;
     GameLoader contentLoader;
-    BoardElementManager elements;
-    PoolElementManager words;
+    BoardElementManager board;
+    PoolElementManager pool;
     Dictionary<Player, ScoreIndicatorManager> scoreManagers;
     TimerHandler timerHandler;
     SpaceshipHandler spaceshipHandler;
@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     BoardElement lastSelectedBoardElement;
     PoolElement lastSelectedPoolElement;
     [SerializeField] bool shuffleGameOnNewRound;
+    bool hasSetJustEnded;
 
     void Start()
     {
@@ -70,13 +71,14 @@ public class GameManager : MonoBehaviour
 
     private void InitializeGameElements()
     {
-        elements = GameObject.Find("Board").GetComponentInChildren<BoardElementManager>();
-        elements.InitElements(OnTileClick);
+        board = GameObject.Find("Board").GetComponentInChildren<BoardElementManager>();
+        board.InitElements(OnTileClick);
 
-        words = GameObject.Find("Pool").GetComponentInChildren<PoolElementManager>();
-        words.InitElements(OnPoolElementClick);
+        pool = GameObject.Find("Pool").GetComponentInChildren<PoolElementManager>();
+        pool.InitElements(OnPoolElementClick);
 
         spaceshipHandler = GameObject.Find("Spaceship").GetComponent<SpaceshipHandler>();
+        spaceshipHandler.Init(SetupTurnStarted);
         spaceshipHandler.SetActivePlayer(currentPlayer);
 
         scoreManagers = new();
@@ -98,9 +100,9 @@ public class GameManager : MonoBehaviour
     {
         GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
         GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
-        GameEvents.TurnEnded.AddAsyncListener(OnTurnEnded);
+        GameEvents.TurnEnded.AddListener(OnTurnEnded);
         GameEvents.GameWon.AddListener(OnGameWon);
-        GameEvents.SetEnded.AddAsyncListener(OnSetEnded);
+        GameEvents.SetEnded.AddListener(OnSetEnded);
     }
 
     private void InitializeGameTheme()
@@ -191,11 +193,7 @@ public class GameManager : MonoBehaviour
     {
         spaceshipHandler.SetTurnEndMessage(true);
         GameGraphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Active);
-        
-        
-        lastSelectedBoardElement?.SetPlayerThumbnail(currentPlayer);
 
-        
         correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
         
         lastSelectedBoardElement.Disable();
@@ -216,37 +214,28 @@ public class GameManager : MonoBehaviour
         AnalyticsManager.IncrementNumberOfMistakes(currentPlayer);
     }
 
-    private async Task OnSetEnded()
+    private void OnSetEnded()
     {
         (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
-        LineRenderer line = GameUtils.DrawLineRendererOnWinningTriplet(elements, winningTriplet);
+        LineRenderer line = GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
         spaceshipHandler.DisplayWonMessage();
         SetupTurnEnded(true);
-        MoveControlToOtherPlayer();
-        
-        await Task.Delay(delayBetweenTurnsInMillis);
-
-        SetupTurnStarted();
-        Destroy(line);
-        words.ResetAll();
-        elements.ResetAll();
-        correctMovesMadeInCurrentSet[Player.Astronaut].Clear();
-        correctMovesMadeInCurrentSet[Player.Alien].Clear();
+        // MoveControlToOtherPlayer();
     }
 
-    private async Task OnTurnEnded()
+    private void OnTurnEnded()
     {
         SetupTurnEnded(false);
-        await Task.Delay(delayBetweenTurnsInMillis);
-        SetupTurnStarted();
-        MoveControlToOtherPlayer();
     }
 
     private void SetupTurnStarted()
     {
+        lastSelectedBoardElement?.SetPlayerThumbnail(currentPlayer);
+        lastSelectedPoolElement = null;
+        lastSelectedBoardElement = null;
         SetControlsEnabled(true);
-        elements.SetElementsEnabled(true);
-        words.SetElementsEnabled(true);
+        board.SetElementsEnabled(true);
+        pool.SetElementsEnabled(true);
         spaceshipHandler.ToggleActivePlayer();
         timerHandler.RestartTimer();
         spaceshipHandler.ResetTurnEndMessage();
@@ -254,15 +243,26 @@ public class GameManager : MonoBehaviour
 
         if(shuffleGameOnNewRound)
         {
-            words.Shuffle();
+            pool.Shuffle();
         }
+
+        if(hasSetJustEnded)
+        {
+            GameUtils.DestroyLineRenderer();
+            pool.ResetAll();
+            board.ResetAll();
+            correctMovesMadeInCurrentSet[Player.Astronaut].Clear();
+            correctMovesMadeInCurrentSet[Player.Alien].Clear();
+        }
+
+        MoveControlToOtherPlayer();
     }
 
     private void SetupTurnEnded(bool keepTilesVisible)
     {
-        elements.SetElementsEnabled(keepTilesVisible);
+        board.SetElementsEnabled(keepTilesVisible);
         SetControlsEnabled(false);
-        words.SetElementsEnabled(false);
+        pool.SetElementsEnabled(false);
         timerHandler.MakeTimerInvisible();
     }
 
@@ -272,17 +272,14 @@ public class GameManager : MonoBehaviour
         lastSelectedPoolElement?.SetBorderColorSelected(false);
         lastSelectedBoardElement?.SetBorderColorSelected(false);
         GameGraphicsManager.SetActivePlayerTint(currentPlayer);
-
-        lastSelectedPoolElement = null;        
-        lastSelectedBoardElement = null;
     }
 
     private void SetControlsEnabled(bool enabled)
     {
         if(enabled)
         {
-            words.SetElementsEnabled(enabled);
-            elements.SetElementsEnabled(enabled);
+            pool.SetElementsEnabled(enabled);
+            board.SetElementsEnabled(enabled);
         }
     }
 

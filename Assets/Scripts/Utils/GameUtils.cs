@@ -6,7 +6,9 @@ using TMPro;
 
 public static class GameUtils
 {
-    public static LineRenderer DrawLineRendererOnWinningTriplet(TileManager gameBoard, (int a, int b, int c) winningTriplet)
+    static LineRenderer line;
+
+    public static LineRenderer DrawLineRendererOnWinningTriplet(BoardElementManager gameBoard, (int a, int b, int c) winningTriplet)
     {
         LineRenderer line = gameBoard.gameObject.AddComponent<LineRenderer>();
         line.positionCount = 2;
@@ -25,23 +27,13 @@ public static class GameUtils
         return line;
     }
 
-        public static LineRenderer DrawLineRendererOnWinningTriplet(BoardElementManager gameBoard, (int a, int b, int c) winningTriplet)
+    public static void DestroyLineRenderer()
     {
-        LineRenderer line = gameBoard.gameObject.AddComponent<LineRenderer>();
-        line.positionCount = 2;
-
-        Vector3 start = gameBoard[winningTriplet.a].transform.position;
-        start.z = 1;
-
-        Vector3 end = gameBoard[winningTriplet.c].transform.position;
-        end.z = 1;
-
-        line.SetPosition(0, start);
-        line.SetPosition(1, end);
-        line.startWidth = 0.1f;
-        line.endWidth = 0.1f;
-
-        return line;
+        if(line != null)
+        {
+            GameObject.Destroy(line);
+            line = null;
+        }
     }
 
     public static (int, int, int) GetWinningTriplet(List<int> movesMadeInCurrentRound)

@@ -82,20 +82,16 @@ public class BoardElement : MonoBehaviour
         if(interactable)
         {
             image.color = Color.white;
-            image.sprite = lastAppliedSprite;
+            // image.sprite = lastAppliedSprite;
             button.interactable = lastInteractableState;
-            
-            // label.SetActive(true);
         }
 
         else
         {
             SetBorderColorSelected(false);
             image.color = Color.grey;
-            image.sprite = null;
+            // image.sprite = null;
             button.interactable = false;
-            
-            // label.SetActive(false);
         }
 
     }
