@@ -235,6 +235,7 @@ public class GameManager : MonoBehaviour
         spaceshipHandler.ToggleActivePlayer();
         timerHandler.RestartTimer();
         spaceshipHandler.ResetTurnEndMessage();
+        spaceshipHandler.SetContinueButtonVisible(false);
         GameGraphicsManager.ResetPlayersSprites();
 
         if(hasJustMadeCorrectMatch)
@@ -265,6 +266,7 @@ public class GameManager : MonoBehaviour
     private void SetupTurnEnded(bool keepTilesVisible)
     {
         board.SetElementsEnabled(keepTilesVisible);
+        spaceshipHandler.SetContinueButtonVisible(true);
         SetControlsEnabled(false);
         pool.SetElementsEnabled(false);
         timerHandler.HideTimer();
