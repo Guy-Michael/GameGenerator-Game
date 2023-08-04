@@ -6,7 +6,7 @@ using System;
 using UnityEngine.Events;
 using TMPro;
 
-public class Element : MonoBehaviour
+public class BoardElement : MonoBehaviour
 {
     Dictionary<Player, Sprite> winSprites;
     public Sprite themeSprite {get; private set;}
@@ -16,8 +16,8 @@ public class Element : MonoBehaviour
     Button button;
     GameObject label;
 
-    public string SpriteName {get => image.sprite.name;}
-    public void LoadSprites(Sprite initialSprite, Dictionary<Player, Sprite> winSprites, string content = "")
+    public string MatchingContent {get => image.sprite.name;}
+    public void LoadSprites(Sprite initialSprite, Dictionary<Player, Sprite> winSprites)
     {
         this.themeSprite = initialSprite;
 
@@ -25,28 +25,20 @@ public class Element : MonoBehaviour
         image.sprite = this.themeSprite;
         lastAppliedSprite = this.themeSprite;
         this.winSprites = winSprites;
-
-        label = transform.Find("Label").gameObject;
-        label.SetActive(false);
-        
-        if(!content.Equals(string.Empty))
-        {
-            InitLabel(content);
-        }
     }
 
-    private void InitLabel(string content)
+    private void LoadText(Dictionary<Player, Sprite> winSprites, string content)
     {
-        label.SetActive(true);
         TextMeshProUGUI text = label.GetComponentInChildren<TextMeshProUGUI>();
         if(GameUtils.AssertHebewText(content))
         {
             text.isRightToLeftText = true;
         }
+
         text.text = content;
     }
 
-    public void Init(Action<Element> onClickCallback)
+    public void Init(Action<BoardElement> onClickCallback)
     {
         button = transform.Find("Image").GetComponent<Button>();
         button.onClick.AddListener(() => SetBorderColorSelected(true));
@@ -74,7 +66,7 @@ public class Element : MonoBehaviour
         image.sprite = lastAppliedSprite;
         lastInteractableState = true;
         button.interactable = lastInteractableState;
-        label.SetActive(true);
+        // label.SetActive(true);
     }
 
     public void Disable()
@@ -93,7 +85,7 @@ public class Element : MonoBehaviour
             image.sprite = lastAppliedSprite;
             button.interactable = lastInteractableState;
             
-            label.SetActive(true);
+            // label.SetActive(true);
         }
 
         else
@@ -103,7 +95,7 @@ public class Element : MonoBehaviour
             image.sprite = null;
             button.interactable = false;
             
-            label.SetActive(false);
+            // label.SetActive(false);
         }
 
     }

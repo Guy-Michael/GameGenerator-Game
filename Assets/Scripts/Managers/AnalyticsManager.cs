@@ -23,6 +23,7 @@ public static class AnalyticsManager
             return timerHandlerInstance;
         }
     }
+    public static string gameCode = "100";
     static AnalyticsManager()
     {
         PlayerAnalytics temp = new();

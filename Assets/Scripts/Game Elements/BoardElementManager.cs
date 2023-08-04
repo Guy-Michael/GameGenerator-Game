@@ -3,19 +3,19 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-public class ElementManager : MonoBehaviour
+public class BoardElementManager : MonoBehaviour
 {
-    Element[] gameElements;
-    public Element this[int index]
+    BoardElement[] gameElements;
+    public BoardElement this[int index]
     {
         get => (index >= 0) && index < gameElements.Length ? gameElements[index] : null;
     }
 
-    public void InitElements(Action<Element> onClickCallback)
+    public void InitElements(Action<BoardElement> onClickCallback)
     {
-        gameElements = GetComponentsInChildren<Element>();
+        gameElements = GetComponentsInChildren<BoardElement>();
 
-        foreach(Element element in gameElements)
+        foreach(BoardElement element in gameElements)
         {
             element.Init(onClickCallback);
         }
@@ -23,12 +23,12 @@ public class ElementManager : MonoBehaviour
 
     public void LoadSprites(Sprite[] sprites, Dictionary<Player, Sprite> winSprites, string[] captions = null)
     {
-        gameElements = GetComponentsInChildren<Element>();
+        gameElements = GetComponentsInChildren<BoardElement>();
         int shorterArray = Mathf.Min(sprites.Length, gameElements.Length);
         
         for (int i = 0; i < shorterArray; i++)
         {
-            gameElements[i].LoadSprites(sprites[i], winSprites, (captions != null ? captions[i] : ""));
+            gameElements[i].LoadSprites(sprites[i], winSprites);
         }
     }
 
@@ -44,7 +44,7 @@ public class ElementManager : MonoBehaviour
 
     public void ResetAll()
     {
-        foreach(Element element in gameElements)
+        foreach(BoardElement element in gameElements)
         {
             element.ResetElement();
         }
@@ -57,7 +57,7 @@ public class ElementManager : MonoBehaviour
 
     internal void SetElementsEnabled(bool enabled)
     {
-        foreach(Element Element in gameElements)
+        foreach(BoardElement Element in gameElements)
         {
             Element.SetInteractable(enabled);
         }

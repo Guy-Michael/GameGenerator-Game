@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 8801062589725810676}
   - component: {fileID: 5190107165723518129}
   m_Layer: 0
-  m_Name: Element
+  m_Name: Board Element
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -202,7 +202,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7371237358281163867}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe1b737b0ed80e647bbf1f80f17a6cea, type: 3}
+  m_Script: {fileID: 11500000, guid: f656617ae7dd60d4a8530fb295c6a897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8643337268691541814
@@ -220,7 +220,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8643337268691541815
 RectTransform:
   m_ObjectHideFlags: 0
