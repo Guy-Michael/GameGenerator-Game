@@ -7,4 +7,5 @@ public interface IAssetImporter
     public Dictionary<Player, Sprite> ImportWinThumbnails();
     public string[] ImportAdditionalLabels();
     public string[] GetGameCodes();
+    public (Sprite[] boardAssets, string[] poolAssets) ImportData(string gameCode);
 }

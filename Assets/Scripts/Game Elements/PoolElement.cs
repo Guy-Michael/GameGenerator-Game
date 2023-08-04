@@ -14,33 +14,38 @@ public class PoolElement : MonoBehaviour
     private bool lastInteractableState;
     Image image;
     Button button;
-    GameObject label;
     string matchingContent;
     public string MatchingContent {get => matchingContent; private set {matchingContent = value;}}
     public void LoadSprites(Sprite initialSprite, Dictionary<Player, Sprite> winSprites)
     {
+        InitFields(winSprites, initialSprite.name);
         this.themeSprite = initialSprite;
-        MatchingContent = themeSprite.name;
         image = transform.Find("Image").GetComponent<Image>();
         image.sprite = this.themeSprite;
         lastAppliedSprite = this.themeSprite;
-        this.winSprites = winSprites;
     }
 
-    private void LoadText(Dictionary<Player, Sprite> winSprites, string content)
+    public void LoadText(Dictionary<Player, Sprite> winSprites, string content)
     {
-        TextMeshProUGUI text = label.GetComponentInChildren<TextMeshProUGUI>();
-        if(GameUtils.AssertHebewText(content))
-        {
-            text.isRightToLeftText = true;
-        }
+        InitFields(winSprites, content);
 
+        image = transform.Find("Image").GetComponent<Image>();
+        image.enabled = false;
+        
+        TextMeshProUGUI text = GetComponentInChildren<TextMeshProUGUI>();
+        GameUtils.FlipTextComponentIfHebrew(text);
         text.text = content;
+    }
+
+    private void InitFields(Dictionary<Player, Sprite> winSprites, string content)
+    {
+        this.winSprites = winSprites;
+        MatchingContent = content;
     }
 
     public void Init(Action<PoolElement> onClickCallback)
     {
-        button = transform.Find("Image").GetComponent<Button>();
+        button = GetComponentInChildren<Button>();
         button.onClick.AddListener(() => SetBorderColorSelected(true));
         button.onClick.AddListener(() => onClickCallback(this));
         lastInteractableState = true;
@@ -66,7 +71,6 @@ public class PoolElement : MonoBehaviour
         image.sprite = lastAppliedSprite;
         lastInteractableState = true;
         button.interactable = lastInteractableState;
-        // label.SetActive(true);
     }
 
     public void Disable()
@@ -84,8 +88,6 @@ public class PoolElement : MonoBehaviour
             image.color = Color.white;
             image.sprite = lastAppliedSprite;
             button.interactable = lastInteractableState;
-            
-            // label.SetActive(true);
         }
 
         else
@@ -94,9 +96,6 @@ public class PoolElement : MonoBehaviour
             image.color = Color.grey;
             image.sprite = null;
             button.interactable = false;
-            
-            // label.SetActive(false);
         }
-
     }
 }

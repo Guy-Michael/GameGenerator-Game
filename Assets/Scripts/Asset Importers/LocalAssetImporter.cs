@@ -7,7 +7,9 @@ public class LocalAssetImporter : MonoBehaviour, IAssetImporter
 {
     public string[] GetGameCodes()
     {
-        return new string[] {"101", "102"};
+        //Temporary. this should be fetched from the DB.
+        //100 and 101 should still be present locally. rest should be imported.
+        return new string[] {"100", "101"};
     }
 
     public string[] ImportAdditionalLabels()
@@ -16,6 +18,29 @@ public class LocalAssetImporter : MonoBehaviour, IAssetImporter
         string[] additionalCountries = JsonConvert.DeserializeObject<string[]>(asset.text);
 
         return additionalCountries;
+    }
+
+    public (Sprite[] boardAssets, string[] poolAssets) ImportData(string gameCode)
+    {
+        Sprite[]sprites = null;
+        string[] strings = null;
+        switch(gameCode)
+        {
+            case "100": //countries
+            {
+                sprites = Resources.LoadAll("Graphics/Countries", typeof(Sprite)).Cast<Sprite>().ToArray();
+                break;
+            }
+         
+            case "101": //logos
+            {
+                sprites = Resources.LoadAll("Themes/Logos", typeof(Sprite)).Cast<Sprite>().ToArray();
+                break;
+            }
+        }
+             
+        strings = sprites.Select(sprite => sprite.name).ToArray();
+        return (sprites, strings);
     }
 
     public Dictionary<string, Sprite> ImportTiles()

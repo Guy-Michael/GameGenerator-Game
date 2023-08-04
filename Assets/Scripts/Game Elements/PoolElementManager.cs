@@ -21,7 +21,7 @@ public class PoolElementManager : MonoBehaviour
         }
     }
 
-    public void LoadSprites(Sprite[] sprites, Dictionary<Player, Sprite> winSprites, string[] captions = null)
+    public void LoadSprites(Sprite[] sprites, Dictionary<Player, Sprite> winSprites)
     {
         gameElements = GetComponentsInChildren<PoolElement>();
         int shorterArray = Mathf.Min(sprites.Length, gameElements.Length);
@@ -30,6 +30,18 @@ public class PoolElementManager : MonoBehaviour
         {
             gameElements[i].LoadSprites(sprites[i], winSprites);
         }
+    }
+
+    public void LoadTexts(string[] captions, Dictionary<Player, Sprite> winSprites)
+    {
+        gameElements = GetComponentsInChildren<PoolElement>();
+        int shorterArray = Mathf.Min(captions.Length, gameElements.Length);
+        
+        for (int i = 0; i < shorterArray; i++)
+        {
+            gameElements[i].LoadText(winSprites, captions[i]);
+        }
+
     }
 
     public void Shuffle()

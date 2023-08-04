@@ -61,9 +61,11 @@ public class GameManager : MonoBehaviour
 
     private void InitializeMoves()
     {
-        correctMovesMadeInCurrentSet = new();
-        correctMovesMadeInCurrentSet.Add(Player.Astronaut, new List<int>());
-        correctMovesMadeInCurrentSet.Add(Player.Alien, new List<int>());
+        correctMovesMadeInCurrentSet = new()
+        {
+            { Player.Astronaut, new List<int>() },
+            { Player.Alien, new List<int>() }
+        };
     }
 
     private void InitializeGameElements()
@@ -105,7 +107,7 @@ public class GameManager : MonoBehaviour
     {
         contentLoader = GetComponent<GameLoader>();
         IAssetImporter importer = GetComponent<LocalAssetImporter>();
-        contentLoader.InitializeGameGraphics(importer);
+        contentLoader.InitializeGameGraphics(importer, AnalyticsManager.gameCode);
     }
 
     void OnTileClick(BoardElement element)
@@ -123,10 +125,7 @@ public class GameManager : MonoBehaviour
 
    void OnPoolElementClick(PoolElement element)
     {
-        if(lastSelectedPoolElement != null)
-        {
-            lastSelectedPoolElement.SetBorderColorSelected(false);
-        }
+        lastSelectedPoolElement?.SetBorderColorSelected(false);
 
         lastSelectedPoolElement = element;
         CheckForMatch();

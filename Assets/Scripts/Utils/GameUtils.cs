@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TMPro;
 
 public static class GameUtils
 {
@@ -101,5 +102,13 @@ public static class GameUtils
         }
 
         return false;
+    }
+
+    public static void FlipTextComponentIfHebrew(TextMeshProUGUI text)
+    {
+        if(AssertHebewText(text.text))
+        {
+            text.isRightToLeftText = true;
+        }
     }
 }
