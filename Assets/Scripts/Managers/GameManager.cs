@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] bool devMode;
-    [SerializeField] int delayBetweenTurnsInMillis;
     Dictionary<Player, List<int>> correctMovesMadeInCurrentSet;
     GameLoader contentLoader;
     BoardElementManager board;
@@ -20,6 +19,7 @@ public class GameManager : MonoBehaviour
     PoolElement lastSelectedPoolElement;
     [SerializeField] bool shuffleGameOnNewRound;
     bool hasSetJustEnded;
+    bool hasJustMadeCorrectMatch;
 
     void Start()
     {
@@ -114,11 +114,7 @@ public class GameManager : MonoBehaviour
 
     void OnTileClick(BoardElement element)
     {
-        if(lastSelectedBoardElement != null)
-        {
-            lastSelectedBoardElement.SetBorderColorSelected(false);
-        }
-
+        lastSelectedBoardElement?.SetBorderColorSelected(false);
         lastSelectedBoardElement = element;
         
         if(!devMode) CheckForMatch();
@@ -133,7 +129,7 @@ public class GameManager : MonoBehaviour
         CheckForMatch();
     }
 
-    private async void DevModeWin()
+    private void DevModeWin()
     {
         lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
         correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
@@ -143,18 +139,18 @@ public class GameManager : MonoBehaviour
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
             scoreManagers[currentPlayer].IncrementScore(currentPlayer.ToOutcome());
-            await GameEvents.SetEnded.Invoke();
+            GameEvents.SetEnded.Invoke();
         }
 
         else
         {
-            await GameEvents.TurnEnded.Invoke();
+            GameEvents.TurnEnded.Invoke();
         }
 
         MoveControlToOtherPlayer();
     }
 
-    async void CheckForMatch()
+    void CheckForMatch()
     {
         if(lastSelectedPoolElement == null || lastSelectedBoardElement == null)
         {
@@ -163,10 +159,10 @@ public class GameManager : MonoBehaviour
 
         string poolMatchingContent = lastSelectedPoolElement.MatchingContent;
         string boardMatchingContent = lastSelectedBoardElement.MatchingContent;
-        bool isMoveCorrect = false;
+        hasJustMadeCorrectMatch = false;
         if(poolMatchingContent.Equals(boardMatchingContent))
         {
-            isMoveCorrect = true;
+            hasJustMadeCorrectMatch = true;
             GameEvents.PlayerGotMatch.Invoke();
         }
 
@@ -175,17 +171,17 @@ public class GameManager : MonoBehaviour
             GameEvents.PlayerFailedMatch.Invoke();
         }
 
-        AnalyticsManager.RecordMove(currentPlayer, poolMatchingContent, lastSelectedBoardElement.themeSprite, isMoveCorrect);
+        AnalyticsManager.RecordMove(currentPlayer, poolMatchingContent, lastSelectedBoardElement.themeSprite, hasJustMadeCorrectMatch);
         AnalyticsManager.IncrementPlaytime(currentPlayer);
 
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
-            await GameEvents.SetEnded.Invoke();
+            GameEvents.SetEnded.Invoke();
         }
 
         else
         {
-            await GameEvents.TurnEnded.Invoke();
+            GameEvents.TurnEnded.Invoke();
         }
     }
 
@@ -196,8 +192,8 @@ public class GameManager : MonoBehaviour
 
         correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
         
-        lastSelectedBoardElement.Disable();
-        lastSelectedPoolElement.gameObject.SetActive(false);
+        lastSelectedBoardElement.SetMatchFeedback(true);
+        lastSelectedPoolElement.SetBorderColorOnMatch(true);
         
         AnalyticsManager.IncrementScore(currentPlayer);
 
@@ -209,6 +205,8 @@ public class GameManager : MonoBehaviour
 
     private void OnPlayerFailedMatch()
     {
+        lastSelectedBoardElement.SetMatchFeedback(false);
+        lastSelectedPoolElement.SetBorderColorOnMatch(false);
         spaceshipHandler.SetTurnEndMessage(false);
         GameGraphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Lost);
         AnalyticsManager.IncrementNumberOfMistakes(currentPlayer);
@@ -217,10 +215,11 @@ public class GameManager : MonoBehaviour
     private void OnSetEnded()
     {
         (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
-        LineRenderer line = GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
+        GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
+        lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
         spaceshipHandler.DisplayWonMessage();
+        hasSetJustEnded = true;
         SetupTurnEnded(true);
-        // MoveControlToOtherPlayer();
     }
 
     private void OnTurnEnded()
@@ -230,9 +229,6 @@ public class GameManager : MonoBehaviour
 
     private void SetupTurnStarted()
     {
-        lastSelectedBoardElement?.SetPlayerThumbnail(currentPlayer);
-        lastSelectedPoolElement = null;
-        lastSelectedBoardElement = null;
         SetControlsEnabled(true);
         board.SetElementsEnabled(true);
         pool.SetElementsEnabled(true);
@@ -241,19 +237,27 @@ public class GameManager : MonoBehaviour
         spaceshipHandler.ResetTurnEndMessage();
         GameGraphicsManager.ResetPlayersSprites();
 
-        if(shuffleGameOnNewRound)
+        if(hasJustMadeCorrectMatch)
         {
-            pool.Shuffle();
+            lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
+            lastSelectedPoolElement.Hide();
+            hasJustMadeCorrectMatch = false;
         }
 
         if(hasSetJustEnded)
         {
+            pool.Shuffle();
             GameUtils.DestroyLineRenderer();
             pool.ResetAll();
             board.ResetAll();
             correctMovesMadeInCurrentSet[Player.Astronaut].Clear();
             correctMovesMadeInCurrentSet[Player.Alien].Clear();
+
+            hasSetJustEnded = false;
         }
+
+        lastSelectedPoolElement = null;
+        lastSelectedBoardElement = null;
 
         MoveControlToOtherPlayer();
     }
@@ -263,7 +267,7 @@ public class GameManager : MonoBehaviour
         board.SetElementsEnabled(keepTilesVisible);
         SetControlsEnabled(false);
         pool.SetElementsEnabled(false);
-        timerHandler.MakeTimerInvisible();
+        timerHandler.HideTimer();
     }
 
     private void MoveControlToOtherPlayer()

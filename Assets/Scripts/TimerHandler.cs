@@ -42,7 +42,7 @@ public class TimerHandler : MonoBehaviour
         StartTimer();
     }
 
-    public void MakeTimerInvisible()
+    public void HideTimer()
     {
         timer?.Pause();
         text.text = "";
@@ -53,9 +53,9 @@ public class TimerHandler : MonoBehaviour
         timer?.Resume();
     }
 
-    private async void InvokeTurnEndedEvent()
+    private void InvokeTurnEndedEvent()
     {
         GameEvents.PlayerFailedMatch.Invoke();
-        await GameEvents.TurnEnded.Invoke();
+        GameEvents.TurnEnded.Invoke();
     }
 }

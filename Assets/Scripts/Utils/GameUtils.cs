@@ -10,7 +10,7 @@ public static class GameUtils
 
     public static LineRenderer DrawLineRendererOnWinningTriplet(BoardElementManager gameBoard, (int a, int b, int c) winningTriplet)
     {
-        LineRenderer line = gameBoard.gameObject.AddComponent<LineRenderer>();
+        line = gameBoard.gameObject.AddComponent<LineRenderer>();
         line.positionCount = 2;
 
         Vector3 start = gameBoard[winningTriplet.a].transform.position;
