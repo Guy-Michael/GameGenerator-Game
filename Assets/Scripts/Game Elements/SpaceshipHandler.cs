@@ -19,12 +19,14 @@ public class SpaceshipHandler : MonoBehaviour
         turnEndMessage = transform.Find("Turn End Message").GetComponent<TextMeshProUGUI>();
         continueButton = GetComponentInChildren<Button>();
         continueButton.onClick.AddListener(()=>onContinueClicked());
+        SetContinueButtonVisible(false);
     }
 
     public void SetActivePlayer(Player player)
     {
         selectedPlayerIndex = ((int)player);
         MovePositionToAboveCurrentPlayer();
+        SetButtonInitialSide(player);
     }
 
     public void ToggleActivePlayer()
@@ -40,6 +42,17 @@ public class SpaceshipHandler : MonoBehaviour
         float currentY = spaceshipRectTransform.anchoredPosition.y;
         spaceshipRectTransform.anchoredPosition = new Vector2(nextPlayerX, currentY);
 
+    }
+
+
+    private void SetButtonInitialSide(Player player)
+    {
+        RectTransform buttonRectTransform = continueButton.GetComponent<RectTransform>();
+        Vector2 continueButtonPosition = buttonRectTransform.anchoredPosition;
+        
+        continueButtonPosition.x = Mathf.Abs(continueButtonPosition.x);
+        continueButtonPosition.x *= player == Player.Alien ? 1 : -1;
+        buttonRectTransform.anchoredPosition = continueButtonPosition;
     }
 
     private void ToggleButtonSide()
