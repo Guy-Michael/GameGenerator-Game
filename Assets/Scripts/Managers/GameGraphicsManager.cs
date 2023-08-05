@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public static class GameGraphicsManager
+public class GameGraphicsManager : MonoBehaviour
 {
     private static Dictionary<Player, Character> playersInGame;
-    
-    static GameGraphicsManager()
-    {
-        InitGameCharacters();
-    }
 
-    private static void InitGameCharacters()
+    public void InitGameCharacters()
     {
         playersInGame = new();
 
@@ -23,18 +18,18 @@ public static class GameGraphicsManager
         playersInGame.Add(Player.Alien, alien);
     }
 
-    public static void SetPlayerSpriteOnTurnEnd(Player player, PlayerState state)
+    public void SetPlayerSpriteOnTurnEnd(Player player, PlayerState state)
     {
         playersInGame[player].SetSprite(state);
     }
 
-    public static void SetActivePlayerTint(Player activePlayer)
+    public void SetActivePlayerTint(Player activePlayer)
     {
         playersInGame[activePlayer].SetActiveInGame(true);
         playersInGame[activePlayer.Other()].SetActiveInGame(false);
     }
 
-    public static void ResetPlayersSprites()
+    public void ResetPlayersSprites()
     {
         playersInGame[Player.Alien].SetSprite(PlayerState.Idle);
         playersInGame[Player.Astronaut].SetSprite(PlayerState.Idle);
