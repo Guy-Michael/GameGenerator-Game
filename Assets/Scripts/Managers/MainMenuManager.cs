@@ -20,7 +20,7 @@ public class MainMenuManager : MonoBehaviour
         if(gameCodes.ToList().Contains(gameCode))
         {
             AnalyticsManager.gameCode = gameCode;
-            SceneTransitionManager.MoveToNextScene();
+            SceneTransitionManager.MoveToGameScene();
         }
     }
 }
