@@ -14,7 +14,7 @@ public static class GameEvents
     public static UnityEvent<string> GameTypeSelected = new();
     public static UnityEvent SetEnded = new();
     public static UnityEvent SetWon = new();
-    public static UnityEvent GameWon = new();
+    public static UnityEventAsync GameWon = new();
 }
 
 public class UnityEventAsync: UnityEvent

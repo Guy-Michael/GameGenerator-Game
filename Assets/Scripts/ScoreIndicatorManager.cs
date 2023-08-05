@@ -12,6 +12,7 @@ public class ScoreIndicatorManager : MonoBehaviour
     List<Image> setIndicators;
     Player player;
     int currentSet;
+    public bool gameWon;
     
     public void Init()
     {
@@ -45,37 +46,14 @@ public class ScoreIndicatorManager : MonoBehaviour
 
         if(currentSet >= 2)
         {
+
             InvokeGameWonEvent();
         }
-    
-        
     }
     
-    private void InvokeGameWonEvent()
+    private async void InvokeGameWonEvent()
     {
-        GameEvents.GameWon.Invoke();
+        gameWon = true;
+        await GameEvents.GameWon.Invoke();
     }
-
-
-
-    // public void IncrementScore(Player player)
-    // {
-    //     WinSet(player.ToOutcome());
-    // }
-
-    // private void WinSet(SetOutcome outcome)
-    // {
-    //     setIndicators[currentSet].sprite = setSprites[outcome];
-    //     Color color = setIndicators[currentSet].color;
-    //     color.a = 255;
-    //     setIndicators[currentSet].color = color;
-
-    //     currentSet++;
-
-    //     if(currentSet >= 2)
-    //     {
-    //         InvokeGameWonEvent();
-    //     }
-    // }
-
 }
