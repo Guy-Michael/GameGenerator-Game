@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
         GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
         GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
         GameEvents.TurnEnded.AddListener(OnTurnEnded);
-        GameEvents.GameWon.AddListener(OnGameWon);
+        GameEvents.GameWon.AddAsyncListener(OnGameWon);
         GameEvents.SetEnded.AddListener(OnSetEnded);
     }
 
@@ -217,7 +217,12 @@ public class GameManager : MonoBehaviour
         (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
         GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
         lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
-        spaceshipHandler.DisplayWonMessage();
+        
+        if(!IsGameWon())
+        {
+            spaceshipHandler.DisplayWonMessage();
+        }
+        
         hasSetJustEnded = true;
         SetupTurnEnded(true);
     }
@@ -263,10 +268,15 @@ public class GameManager : MonoBehaviour
         MoveControlToOtherPlayer();
     }
 
-    private void SetupTurnEnded(bool keepTilesVisible)
+    private void SetupTurnEnded(bool elementsEnabled)
     {
-        board.SetElementsEnabled(keepTilesVisible);
-        spaceshipHandler.SetContinueButtonVisible(true);
+        board.SetElementsEnabled(elementsEnabled);
+        
+        if(!IsGameWon())
+        {
+            spaceshipHandler.SetContinueButtonVisible(true);
+
+        }
         SetControlsEnabled(false);
         pool.SetElementsEnabled(false);
         timerHandler.HideTimer();
@@ -289,8 +299,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnGameWon()
+    private async Task OnGameWon()
     {
+        await Task.Delay(3000);
         SceneTransitionManager.MoveToNextScene();
+    }
+
+    private bool IsGameWon()
+    {
+        return scoreManagers[Player.Astronaut].gameWon || scoreManagers[Player.Alien].gameWon;
     }
 }
