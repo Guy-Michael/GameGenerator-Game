@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class FirstPlayerDisplayer : MonoBehaviour
 {
-    [SerializeField] Sprite astronautWin;
-    [SerializeField] Sprite astronautLose;
-    [SerializeField] Sprite alienWin;
-    [SerializeField] Sprite alienLose;
-
     public void Init(Player firstPlayer)
     {
 
