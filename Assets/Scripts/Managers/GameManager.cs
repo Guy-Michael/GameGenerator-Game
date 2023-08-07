@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
         GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
         GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
         GameEvents.TurnEnded.AddListener(OnTurnEnded);
-        GameEvents.GameEnded.AddAsyncListener(OnGameWon);
+        GameEvents.GameEnded.AddAsyncListener(OnGameEnded);
         GameEvents.SetEnded.AddListener(OnSetEnded);
     }
 
@@ -231,12 +231,7 @@ public class GameManager : MonoBehaviour
         GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
         lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
         
-        if(IsGameWon())
-        {
-            AnalyticsManager.outcome = currentPlayer.ToOutcome();
-        }
-        
-        else
+        if(!IsGameWon())
         {
             spaceshipHandler.DisplayWonMessage();
         }
@@ -290,18 +285,13 @@ public class GameManager : MonoBehaviour
     {
         board.SetElementsEnabled(elementsEnabled);
         
-        if(!IsGameWon())
+        if(IsGameWon() || IsGameTied())
         {
-            spaceshipHandler.SetContinueButtonVisible(true);
-        }
-
-        if(IsGameTied())
-        {
-            AnalyticsManager.outcome = SetOutcome.Tie;
             await GameEvents.GameEnded.Invoke();
             return;
         }
-        
+
+        spaceshipHandler.SetContinueButtonVisible(true);
         SetControlsEnabled(false);
         pool.SetElementsEnabled(false);
         timerHandler.HideTimer();
@@ -325,10 +315,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private async Task OnGameWon()
+    private async Task OnGameEnded()
     {
+        timerHandler.HideTimer();
+        AnalyticsManager.outcome = IsGameTied() ? SetOutcome.Tie : currentPlayer.ToOutcome();
         GameEvents.RemoveAllListeners();
-        // AnalyticsManager.outcome = currentPlayer.ToOutcome();
         await Task.Delay(3000);
         SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
     }

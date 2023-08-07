@@ -46,7 +46,7 @@ public class ScoreIndicatorManager : MonoBehaviour
 
         if(currentSet >= 2)
         {
-
+            gameWon = true;
             InvokeGameWonEvent();
         }
     }
