@@ -37,13 +37,11 @@ public class PoolElementManager : MonoBehaviour
     public void LoadTexts(string[] captions, Dictionary<Player, Sprite> winSprites)
     {
         gameElements = GetComponentsInChildren<PoolElement>();
-        int shorterArray = Mathf.Min(captions.Length, gameElements.Length);
         
-        for (int i = 0; i < shorterArray; i++)
+        for (int i = 0; i < captions.Length; i++)
         {
             gameElements[i].LoadText(winSprites, captions[i]);
         }
-
     }
 
     public void Shuffle()

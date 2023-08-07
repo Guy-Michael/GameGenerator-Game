@@ -37,7 +37,7 @@ public class BoardElementManager : MonoBehaviour
     public void Shuffle()
     {
         IEnumerable<int> indecies = Enumerable.Range(0, gameElements.Length).OrderBy(s => UnityEngine.Random.value);
-        GetComponent<GridLayoutGroup>().enabled = true;
+        // GetComponent<GridLayoutGroup>().enabled = true;
         for(int i = 0 ; i < gameElements.Length; i++)
         {
             gameElements[i].transform.SetSiblingIndex(indecies.ElementAt(i));
@@ -51,7 +51,8 @@ public class BoardElementManager : MonoBehaviour
             yield return null;
             yield return null;
             yield return null;
-            GetComponent<GridLayoutGroup>().enabled = false;
+            // LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+            // GetComponent<GridLayoutGroup>().enabled = false;
         }
     }
 

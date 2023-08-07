@@ -108,8 +108,8 @@ public class GameManager : MonoBehaviour
         timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
 
         graphicsManager.SetActivePlayerTint(currentPlayer);
-        if(shouldRandomizePoolOnEveryRound) board.Shuffle();
-        if(shouldRandomizePoolOnEveryRound) pool.Shuffle();
+        // if(shouldRandomizePoolOnEveryRound) board.Shuffle();
+        // if(shouldRandomizePoolOnEveryRound) pool.Shuffle();
     }
 
     private void AddEventListeners()
