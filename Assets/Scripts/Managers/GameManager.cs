@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,7 +32,7 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.I))
         {
-            AnalyticsManager.outcome = SetOutcome.AstronautWin;
+            AnalyticsManager.outcome = SetOutcome.Tie;
             SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
         }
     }
@@ -113,7 +114,7 @@ public class GameManager : MonoBehaviour
         GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
         GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
         GameEvents.TurnEnded.AddListener(OnTurnEnded);
-        GameEvents.GameWon.AddAsyncListener(OnGameWon);
+        GameEvents.GameEnded.AddAsyncListener(OnGameWon);
         GameEvents.SetEnded.AddListener(OnSetEnded);
     }
 
@@ -230,7 +231,12 @@ public class GameManager : MonoBehaviour
         GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
         lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
         
-        if(!IsGameWon())
+        if(IsGameWon())
+        {
+            AnalyticsManager.outcome = currentPlayer.ToOutcome();
+        }
+        
+        else
         {
             spaceshipHandler.DisplayWonMessage();
         }
@@ -280,20 +286,27 @@ public class GameManager : MonoBehaviour
         MoveControlToOtherPlayer();
     }
 
-    private void SetupTurnEnded(bool elementsEnabled)
+    private async void SetupTurnEnded(bool elementsEnabled)
     {
         board.SetElementsEnabled(elementsEnabled);
         
         if(!IsGameWon())
         {
             spaceshipHandler.SetContinueButtonVisible(true);
+        }
 
+        if(IsGameTied())
+        {
+            AnalyticsManager.outcome = SetOutcome.Tie;
+            await GameEvents.GameEnded.Invoke();
+            return;
         }
         
         SetControlsEnabled(false);
         pool.SetElementsEnabled(false);
         timerHandler.HideTimer();
     }
+
 
     private void MoveControlToOtherPlayer()
     {
@@ -315,7 +328,7 @@ public class GameManager : MonoBehaviour
     private async Task OnGameWon()
     {
         GameEvents.RemoveAllListeners();
-        AnalyticsManager.outcome = currentPlayer.ToOutcome();
+        // AnalyticsManager.outcome = currentPlayer.ToOutcome();
         await Task.Delay(3000);
         SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
     }
@@ -323,5 +336,13 @@ public class GameManager : MonoBehaviour
     private bool IsGameWon()
     {
         return scoreManagers[Player.Astronaut].gameWon || scoreManagers[Player.Alien].gameWon;
+    }
+
+    private bool IsGameTied()
+    {
+        int astronautMoves = AnalyticsManager.analytics[Player.Astronaut].moves.Where(move => move.isCorrect).Count();
+        int alienMoves = AnalyticsManager.analytics[Player.Alien].moves.Where(move => move.isCorrect).Count();
+
+        return astronautMoves + alienMoves >= 9;
     }
 }

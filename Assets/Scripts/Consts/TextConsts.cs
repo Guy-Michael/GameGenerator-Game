@@ -17,6 +17,12 @@ public static class TextConsts
 
     public static class GameFeedbackText
     {
+        public static readonly string TieCaption = "תיקו!".Reverse()
+                                                    + "\n"
+                                                    + "לא הצלחתם לעלות לחללית..".Reverse()
+                                                    + "\n"
+                                                    + "שחקו שוב על מנת לחזור הביתה".Reverse(); 
+       
         public static string GenerateWinningText(string name)
         {
             return $"כל הכבוד {name}!".Reverse()
@@ -24,7 +30,6 @@ public static class TextConsts
                     + "בהצלחה בדרך הביתה".Reverse();
         }
     }
-
 
     static TextConsts()
     {

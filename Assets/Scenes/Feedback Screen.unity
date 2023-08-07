@@ -1278,6 +1278,7 @@ MonoBehaviour:
   caption: {fileID: 1660590411}
   alienWinSprite: {fileID: 21300000, guid: b4b5befde18965749b17c77e01310c2b, type: 3}
   astronautWinSprite: {fileID: 21300000, guid: a202b6ebc555e6a409772b5bd6a5e601, type: 3}
+  tieSprite: {fileID: 21300000, guid: 4bf5b2a46e1c3784fbf50cc602319a11, type: 3}
 --- !u!1001 &1118086114
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1702,7 +1703,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 1.1562301, y: 0.4074049}
-  m_SizeDelta: {x: 500, y: 50}
+  m_SizeDelta: {x: 700, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1660590411
 MonoBehaviour:
