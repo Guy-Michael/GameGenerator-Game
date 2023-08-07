@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     {
         firstPlayerScreen.SetActive(false);
         gameScreen.SetActive(true);
-
+        AnalyticsManager.ResetGameAnalytics();
         InitializeMoves();
         InitializeGameElements();
         InitializeGameTheme();
