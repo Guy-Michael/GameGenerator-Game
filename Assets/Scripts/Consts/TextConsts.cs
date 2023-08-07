@@ -15,7 +15,15 @@ public static class TextConsts
         public static readonly string playerLostTurn =  "לא נורא,".Reverse() + "\n" + "אולי בפעם הבאה!".Reverse();
     };
 
-    
+    public static class GameFeedbackText
+    {
+        public static string GenerateWinningText(string name)
+        {
+            return $"כל הכבוד {name}!".Reverse()
+                    + "\n".Reverse()
+                    + "בהצלחה בדרך הביתה".Reverse();
+        }
+    }
 
 
     static TextConsts()

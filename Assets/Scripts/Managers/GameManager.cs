@@ -31,14 +31,13 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.I))
         {
-            SceneTransitionManager.MoveToNextScene();
+            AnalyticsManager.outcome = SetOutcome.AstronautWin;
+            SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
         }
-
     }
 
     private void InitIntroScreen()
     {
-
         GameObject firstPlayerScreen = GameObject.Find("First Player Decleration Elements");
         GameObject gameScreen = GameObject.Find("Game");
         
@@ -62,7 +61,7 @@ public class GameManager : MonoBehaviour
     {
         firstPlayerScreen.SetActive(false);
         gameScreen.SetActive(true);
-
+        AnalyticsManager.ResetGameAnalytics();
         InitializeMoves();
         InitializeGameElements();
         InitializeGameTheme();
@@ -218,8 +217,8 @@ public class GameManager : MonoBehaviour
 
     private void OnPlayerFailedMatch()
     {
-        lastSelectedBoardElement.SetMatchFeedback(false);
-        lastSelectedPoolElement.SetBorderColorOnMatch(false);
+        lastSelectedBoardElement?.SetMatchFeedback(false);
+        lastSelectedPoolElement?.SetBorderColorOnMatch(false);
         spaceshipHandler.SetTurnEndMessage(false);
         graphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Lost);
         AnalyticsManager.IncrementNumberOfMistakes(currentPlayer);
@@ -290,6 +289,7 @@ public class GameManager : MonoBehaviour
             spaceshipHandler.SetContinueButtonVisible(true);
 
         }
+        
         SetControlsEnabled(false);
         pool.SetElementsEnabled(false);
         timerHandler.HideTimer();
@@ -315,8 +315,9 @@ public class GameManager : MonoBehaviour
     private async Task OnGameWon()
     {
         GameEvents.RemoveAllListeners();
+        AnalyticsManager.outcome = currentPlayer.ToOutcome();
         await Task.Delay(3000);
-        SceneTransitionManager.MoveToNextScene();
+        SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
     }
 
     private bool IsGameWon()

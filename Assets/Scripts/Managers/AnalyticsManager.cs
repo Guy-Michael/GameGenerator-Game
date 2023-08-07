@@ -24,21 +24,25 @@ public static class AnalyticsManager
         }
     }
     public static string gameCode = "100";
+    public static SetOutcome outcome;
     static AnalyticsManager()
     {
-        PlayerAnalytics temp = new();
-
         analytics = new();
-
-        //temp.moves is instantiated twice so both lists have unique object pointers.
-        temp.moves = new();
-        analytics.Add(Player.Astronaut, temp);
-        
-        temp.moves = new();
-        analytics.Add(Player.Alien, temp);
-
+        ResetGameAnalytics();
         SetPlayerName(Player.Astronaut, TextConsts.defaultPlayerNames[Player.Astronaut]);
         SetPlayerName(Player.Alien, TextConsts.defaultPlayerNames[Player.Alien]);
+    }
+
+    public static void ResetGameAnalytics()
+    {
+        PlayerAnalytics temp = new();
+        temp.moves = new();
+
+        analytics.Clear();
+        analytics.Add(Player.Astronaut, temp);
+
+        temp.moves = new();
+        analytics.Add(Player.Alien, temp);
     }
 
     public static void IncrementNumberOfMistakes(Player player)

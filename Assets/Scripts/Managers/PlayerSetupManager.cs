@@ -28,7 +28,7 @@ public class PlayerSetupManager : MonoBehaviour
 
         AnalyticsManager.SetPlayerName(Player.Astronaut, player1InputField.text);
         AnalyticsManager.SetPlayerName(Player.Alien, player2InputField.text);
-        SceneTransitionManager.MoveToGameScene();
+        SceneTransitionManager.MoveToScene(SceneNames.Game);
     }
 
     bool IsInputValid()
