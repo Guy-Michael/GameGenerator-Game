@@ -217,8 +217,8 @@ public class GameManager : MonoBehaviour
 
     private void OnPlayerFailedMatch()
     {
-        lastSelectedBoardElement.SetMatchFeedback(false);
-        lastSelectedPoolElement.SetBorderColorOnMatch(false);
+        lastSelectedBoardElement?.SetMatchFeedback(false);
+        lastSelectedPoolElement?.SetBorderColorOnMatch(false);
         spaceshipHandler.SetTurnEndMessage(false);
         graphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Lost);
         AnalyticsManager.IncrementNumberOfMistakes(currentPlayer);
@@ -289,6 +289,7 @@ public class GameManager : MonoBehaviour
             spaceshipHandler.SetContinueButtonVisible(true);
 
         }
+        
         SetControlsEnabled(false);
         pool.SetElementsEnabled(false);
         timerHandler.HideTimer();
