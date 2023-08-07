@@ -31,14 +31,13 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.I))
         {
-            SceneTransitionManager.MoveToNextScene();
+            AnalyticsManager.outcome = SetOutcome.AstronautWin;
+            SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
         }
-
     }
 
     private void InitIntroScreen()
     {
-
         GameObject firstPlayerScreen = GameObject.Find("First Player Decleration Elements");
         GameObject gameScreen = GameObject.Find("Game");
         
@@ -315,8 +314,9 @@ public class GameManager : MonoBehaviour
     private async Task OnGameWon()
     {
         GameEvents.RemoveAllListeners();
+        AnalyticsManager.outcome = currentPlayer.ToOutcome();
         await Task.Delay(3000);
-        SceneTransitionManager.MoveToNextScene();
+        SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
     }
 
     private bool IsGameWon()

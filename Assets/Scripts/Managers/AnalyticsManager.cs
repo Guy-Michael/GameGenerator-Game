@@ -24,6 +24,7 @@ public static class AnalyticsManager
         }
     }
     public static string gameCode = "100";
+    public static SetOutcome outcome;
     static AnalyticsManager()
     {
         PlayerAnalytics temp = new();

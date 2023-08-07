@@ -7,6 +7,8 @@ public class MainMenuManager : MonoBehaviour
 {
 
     string[] gameCodes;
+    [SerializeField] GameObject warningText;
+
     void Start()
     {
         IAssetImporter importer = GetComponent<LocalAssetImporter>();
@@ -20,7 +22,13 @@ public class MainMenuManager : MonoBehaviour
         if(gameCodes.ToList().Contains(gameCode))
         {
             AnalyticsManager.gameCode = gameCode;
-            SceneTransitionManager.MoveToGameScene();
+            SceneTransitionManager.MoveToScene(SceneNames.PlayerSetup);
+        }
+
+        else
+        {
+            warningText.SetActive(true);
+            Timer.Fire(3, ()=> warningText.SetActive(false));
         }
     }
 }
