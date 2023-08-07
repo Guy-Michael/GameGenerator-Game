@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using UnityEngine.UI;
+using System.Collections;
 
 public class BoardElementManager : MonoBehaviour
 {
@@ -35,9 +37,22 @@ public class BoardElementManager : MonoBehaviour
     public void Shuffle()
     {
         IEnumerable<int> indecies = Enumerable.Range(0, gameElements.Length).OrderBy(s => UnityEngine.Random.value);
+        // GetComponent<GridLayoutGroup>().enabled = true;
         for(int i = 0 ; i < gameElements.Length; i++)
         {
             gameElements[i].transform.SetSiblingIndex(indecies.ElementAt(i));
+        }
+
+        StartCoroutine(TurnOfGridLayout());
+
+        IEnumerator TurnOfGridLayout()
+        {
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+            // LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+            // GetComponent<GridLayoutGroup>().enabled = false;
         }
     }
 

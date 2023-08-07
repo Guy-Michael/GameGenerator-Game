@@ -1,12 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using System;
-using UnityEngine.Events;
 using TMPro;
+using UnityEngine.EventSystems;
 
-public class PoolElement : MonoBehaviour
+public class PoolElement : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     Dictionary<Player, Sprite> winSprites;
     public Sprite themeSprite {get; private set;}
@@ -108,5 +107,17 @@ public class PoolElement : MonoBehaviour
             image.sprite = null;
             button.interactable = false;
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        var rect = GetComponent<RectTransform>();
+        rect.localScale *= 1.2f;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        var rect= GetComponent<RectTransform>();
+        rect.localScale = new Vector3(1, 1, 1);
     }
 }

@@ -10,33 +10,44 @@ public class VisualFeedback : MonoBehaviour
     [SerializeField] TextMeshProUGUI caption;
     [SerializeField] Sprite alienWinSprite;
     [SerializeField] Sprite astronautWinSprite;
+    [SerializeField] Sprite tieSprite;
 
     void Start()
     {
         SetOutcome outcome = AnalyticsManager.outcome;
-        string name = string.Empty;
-        Sprite winSprite = null;
+        string outcomeCaption = string.Empty;
+        Sprite outcomeSprite = null;
 
         switch(outcome)
         {
             case SetOutcome.AlienWin:
             {
                 name = AnalyticsManager.analytics[Player.Alien].name;
-                winSprite = alienWinSprite;        
+                outcomeSprite = alienWinSprite;        
+                outcomeCaption = TextConsts.GameFeedbackText.GenerateWinningText(name);
                 break;
             }
             
             case SetOutcome.AstronautWin:
             {
                 name = AnalyticsManager.analytics[Player.Astronaut].name;
-                winSprite = astronautWinSprite;
+                outcomeSprite = astronautWinSprite;
+                outcomeCaption = TextConsts.GameFeedbackText.GenerateWinningText(name);
+                break;
+            }
+
+            case SetOutcome.Tie:
+            {
+                outcomeCaption = TextConsts.GameFeedbackText.TieCaption;
+                outcomeSprite = tieSprite;
+                spaceship.rectTransform.anchoredPosition = new Vector2(1, 3.5f);
+                spaceship.rectTransform.sizeDelta = new Vector2(870, 875);
                 break;
             }
         }
 
-        string outcomeCaption = TextConsts.GameFeedbackText.GenerateWinningText(name);
         caption.text = outcomeCaption;
         caption.isRightToLeftText = false;
-        spaceship.sprite = winSprite;
+        spaceship.sprite = outcomeSprite;
     }
 }

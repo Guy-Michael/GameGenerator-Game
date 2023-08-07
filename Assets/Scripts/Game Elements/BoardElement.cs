@@ -5,8 +5,9 @@ using UnityEngine;
 using System;
 using UnityEngine.Events;
 using TMPro;
+using UnityEngine.EventSystems;
 
-public class BoardElement : MonoBehaviour
+public class BoardElement : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] Sprite VSprite;
     [SerializeField] Sprite XSprite;
@@ -84,7 +85,6 @@ public class BoardElement : MonoBehaviour
         lastInteractableState = true;
         button.interactable = lastInteractableState;
         HideFeedbackMarker();
-        // label.SetActive(true);
     }
 
     private void HideFeedbackMarker()
@@ -116,10 +116,21 @@ public class BoardElement : MonoBehaviour
 
         else
         {
-            // SetBorderColorSelected(false);
             image.color = Color.grey;
             button.interactable = false;
         }
 
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        var rect = GetComponent<RectTransform>();
+        rect.localScale *= 1.2f;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        var rect= GetComponent<RectTransform>();
+        rect.localScale = new Vector3(1, 1, 1);
     }
 }

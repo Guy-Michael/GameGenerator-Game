@@ -78,7 +78,7 @@ public class SpaceshipHandler : MonoBehaviour
         turnEndMessage.text = "";
     }
 
-    internal void DisplayWonMessage()
+    internal void DisplayWonRoundMessage()
     {
         turnEndMessage.text = TextConsts.TurnFeedbackText.playerWonSet;
     }

@@ -38,7 +38,7 @@ public class LocalAssetImporter : MonoBehaviour, IAssetImporter
                 break;
             }
         }
-             
+
         strings = sprites.Select(sprite => sprite.name).ToArray();
         return (sprites, strings);
     }

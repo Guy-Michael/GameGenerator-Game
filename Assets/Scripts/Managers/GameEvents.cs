@@ -14,7 +14,7 @@ public static class GameEvents
     public static UnityEvent<string> GameTypeSelected = new();
     public static UnityEvent SetEnded = new();
     public static UnityEvent SetWon = new();
-    public static UnityEventAsync GameWon = new();
+    public static UnityEventAsync GameEnded = new();
 
     public static void RemoveAllListeners()
     {
@@ -25,7 +25,7 @@ public static class GameEvents
         GameTypeSelected.RemoveAllListeners();
         SetEnded.RemoveAllListeners();
         SetWon.RemoveAllListeners();
-        GameWon.RemoveAllListeners();
+        GameEnded.RemoveAllListeners();
     } 
 }
 

@@ -12,17 +12,15 @@ public class GameLoader : MonoBehaviour
     public void InitializeGameGraphics(IAssetImporter assetImporter, string gameCode)
     {
         this.assetImporter = assetImporter;
-        // Dictionary<string, Sprite> assets = assetImporter.ImportTiles();
         Dictionary<Player, Sprite> winThumbnails = assetImporter.ImportWinThumbnails();
-        // string[] additionalData = assetImporter.ImportAdditionalLabels();
 
-        // gameBoard.LoadSprites(assets.Values.ToArray(), winThumbnails, assets.Keys.ToArray());
-        // pool.LoadSprites(assets.Values.ToArray(), winThumbnails);
-    
-        //get assets based on game code
-        (Sprite[] boardElements, string[] poolElements) elements = assetImporter.ImportData(gameCode);
-        gameBoard.LoadSprites(elements.boardElements, winThumbnails);
-        pool.LoadTexts(elements.poolElements, winThumbnails);
+        (Sprite[] boardElements, string[] poolElements) = assetImporter.ImportData(gameCode);
+        
+        boardElements = boardElements[0..9].OrderBy(s=>UnityEngine.Random.value).ToArray();
+        poolElements = poolElements[0..12].OrderBy(s=>UnityEngine.Random.value).ToArray();
+        
+        gameBoard.LoadSprites(boardElements, winThumbnails);
+        pool.LoadTexts(poolElements, winThumbnails);
     
     }
 }

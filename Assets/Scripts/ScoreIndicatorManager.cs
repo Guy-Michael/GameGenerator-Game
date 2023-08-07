@@ -46,7 +46,7 @@ public class ScoreIndicatorManager : MonoBehaviour
 
         if(currentSet >= 2)
         {
-
+            gameWon = true;
             InvokeGameWonEvent();
         }
     }
@@ -54,6 +54,6 @@ public class ScoreIndicatorManager : MonoBehaviour
     private async void InvokeGameWonEvent()
     {
         gameWon = true;
-        await GameEvents.GameWon.Invoke();
+        await GameEvents.GameEnded.Invoke();
     }
 }
