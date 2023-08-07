@@ -8,6 +8,8 @@ using System.Linq;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] bool devMode;
+    [SerializeField] bool shouldRandomizePoolOnEveryRound;
+
     Dictionary<Player, List<int>> correctMovesMadeInCurrentSet;
     GameLoader contentLoader;
     BoardElementManager board;
@@ -18,7 +20,6 @@ public class GameManager : MonoBehaviour
     public static Player currentPlayer;
     BoardElement lastSelectedBoardElement;
     PoolElement lastSelectedPoolElement;
-    [SerializeField] bool shuffleGameOnNewRound;
     bool hasSetJustEnded;
     bool hasJustMadeCorrectMatch;
     GameGraphicsManager graphicsManager;
@@ -107,6 +108,8 @@ public class GameManager : MonoBehaviour
         timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
 
         graphicsManager.SetActivePlayerTint(currentPlayer);
+        if(shouldRandomizePoolOnEveryRound) board.Shuffle();
+        if(shouldRandomizePoolOnEveryRound) pool.Shuffle();
     }
 
     private void AddEventListeners()
@@ -187,7 +190,7 @@ public class GameManager : MonoBehaviour
         AnalyticsManager.RecordMove(currentPlayer, poolMatchingContent, lastSelectedBoardElement.themeSprite, hasJustMadeCorrectMatch);
         AnalyticsManager.IncrementPlaytime(currentPlayer);
 
-        if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
+        if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]) || IsGameTied())
         {
             GameEvents.SetEnded.Invoke();
         }
@@ -203,8 +206,8 @@ public class GameManager : MonoBehaviour
         spaceshipHandler.SetTurnEndMessage(true);
         graphicsManager.SetPlayerSpriteOnTurnEnd(currentPlayer, PlayerState.Active);
 
+
         correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
-        
         lastSelectedBoardElement.SetMatchFeedback(true);
         lastSelectedPoolElement.SetBorderColorOnMatch(true);
         
@@ -227,15 +230,18 @@ public class GameManager : MonoBehaviour
 
     private void OnSetEnded()
     {
-        (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
-        GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
-        lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
-        
-        if(!IsGameWon())
+        if(!IsGameTied())
         {
-            spaceshipHandler.DisplayWonMessage();
+            spaceshipHandler.DisplayWonRoundMessage();
+            (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
+            GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
+            lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
         }
         
+        else
+        {
+        }
+
         hasSetJustEnded = true;
         SetupTurnEnded(true);
     }
@@ -265,10 +271,10 @@ public class GameManager : MonoBehaviour
 
         if(hasSetJustEnded)
         {
-            pool.Shuffle();
             GameUtils.DestroyLineRenderer();
             pool.ResetAll();
             board.ResetAll();
+            board.Shuffle();
             correctMovesMadeInCurrentSet[Player.Astronaut].Clear();
             correctMovesMadeInCurrentSet[Player.Alien].Clear();
 
@@ -278,6 +284,7 @@ public class GameManager : MonoBehaviour
         lastSelectedPoolElement = null;
         lastSelectedBoardElement = null;
 
+        if(shouldRandomizePoolOnEveryRound) pool.Shuffle();
         MoveControlToOtherPlayer();
     }
 
@@ -285,7 +292,7 @@ public class GameManager : MonoBehaviour
     {
         board.SetElementsEnabled(elementsEnabled);
         
-        if(IsGameWon() || IsGameTied())
+        if(IsGameWon()/* || IsGameTied() */)
         {
             await GameEvents.GameEnded.Invoke();
             return;
@@ -318,7 +325,7 @@ public class GameManager : MonoBehaviour
     private async Task OnGameEnded()
     {
         timerHandler.HideTimer();
-        AnalyticsManager.outcome = IsGameTied() ? SetOutcome.Tie : currentPlayer.ToOutcome();
+        AnalyticsManager.outcome = /*IsGameTied() ? SetOutcome.Tie :*/ currentPlayer.ToOutcome();
         GameEvents.RemoveAllListeners();
         await Task.Delay(3000);
         SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
@@ -331,9 +338,8 @@ public class GameManager : MonoBehaviour
 
     private bool IsGameTied()
     {
-        int astronautMoves = AnalyticsManager.analytics[Player.Astronaut].moves.Where(move => move.isCorrect).Count();
-        int alienMoves = AnalyticsManager.analytics[Player.Alien].moves.Where(move => move.isCorrect).Count();
-
+        int astronautMoves = correctMovesMadeInCurrentSet[Player.Astronaut].Count();
+        int alienMoves = correctMovesMadeInCurrentSet[Player.Alien].Count();
         return astronautMoves + alienMoves >= 9;
     }
 }
