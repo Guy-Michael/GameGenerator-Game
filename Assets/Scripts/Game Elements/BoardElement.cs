@@ -34,6 +34,11 @@ public class BoardElement : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         this.winSprites = winSprites;
     }
 
+    public void SwapSprite(Sprite sprite)
+    {
+        image.sprite = sprite;
+    }
+
     private void LoadText(Dictionary<Player, Sprite> winSprites, string content)
     {
         TextMeshProUGUI text = label.GetComponentInChildren<TextMeshProUGUI>();

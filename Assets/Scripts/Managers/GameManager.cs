@@ -8,7 +8,8 @@ using System.Linq;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] bool devMode;
-    [SerializeField] bool shouldRandomizePoolOnEveryRound;
+    [SerializeField] bool shouldRandomizePool;
+    [SerializeField] bool shouldRandomizeBoardOnSetEnd;
 
     Dictionary<Player, List<int>> correctMovesMadeInCurrentSet;
     GameLoader contentLoader;
@@ -86,7 +87,7 @@ public class GameManager : MonoBehaviour
         graphicsManager.InitGameCharacters();
 
         board = GameObject.Find("Board").GetComponentInChildren<BoardElementManager>();
-        board.InitElements(OnTileClick);
+        board.InitElements(OnBoardElementClick);
 
         pool = GameObject.Find("Pool").GetComponentInChildren<PoolElementManager>();
         pool.InitElements(OnPoolElementClick);
@@ -108,8 +109,7 @@ public class GameManager : MonoBehaviour
         timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
 
         graphicsManager.SetActivePlayerTint(currentPlayer);
-        // if(shouldRandomizePoolOnEveryRound) board.Shuffle();
-        // if(shouldRandomizePoolOnEveryRound) pool.Shuffle();
+        if(shouldRandomizePool) pool.Shuffle();
     }
 
     private void AddEventListeners()
@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour
         contentLoader.InitializeGameGraphics(importer, AnalyticsManager.gameCode);
     }
 
-    void OnTileClick(BoardElement element)
+    void OnBoardElementClick(BoardElement element)
     {
         lastSelectedBoardElement?.SetBorderColorSelected(false);
         lastSelectedBoardElement = element;
@@ -274,7 +274,12 @@ public class GameManager : MonoBehaviour
             GameUtils.DestroyLineRenderer();
             pool.ResetAll();
             board.ResetAll();
-            board.Shuffle();
+
+            if(shouldRandomizeBoardOnSetEnd)
+            {
+                board.Shuffle();
+            }
+
             correctMovesMadeInCurrentSet[Player.Astronaut].Clear();
             correctMovesMadeInCurrentSet[Player.Alien].Clear();
 
@@ -284,7 +289,7 @@ public class GameManager : MonoBehaviour
         lastSelectedPoolElement = null;
         lastSelectedBoardElement = null;
 
-        if(shouldRandomizePoolOnEveryRound) pool.Shuffle();
+        if(shouldRandomizePool) pool.Shuffle();
         MoveControlToOtherPlayer();
     }
 
