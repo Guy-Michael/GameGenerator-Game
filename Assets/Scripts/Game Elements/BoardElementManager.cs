@@ -36,23 +36,11 @@ public class BoardElementManager : MonoBehaviour
 
     public void Shuffle()
     {
-        IEnumerable<int> indecies = Enumerable.Range(0, gameElements.Length).OrderBy(s => UnityEngine.Random.value);
-        // GetComponent<GridLayoutGroup>().enabled = true;
-        for(int i = 0 ; i < gameElements.Length; i++)
+        Sprite[] sprites = gameElements.Select((element) => element.themeSprite).ToArray();
+        sprites = sprites.OrderBy(sprite => UnityEngine.Random.value).ToArray();
+        for(int i = 0; i < gameElements.Length; i++)
         {
-            gameElements[i].transform.SetSiblingIndex(indecies.ElementAt(i));
-        }
-
-        StartCoroutine(TurnOfGridLayout());
-
-        IEnumerator TurnOfGridLayout()
-        {
-            yield return null;
-            yield return null;
-            yield return null;
-            yield return null;
-            // LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
-            // GetComponent<GridLayoutGroup>().enabled = false;
+            gameElements[i].SwapSprite(sprites[i]);
         }
     }
 
