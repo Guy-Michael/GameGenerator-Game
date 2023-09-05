@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour
     GameLoader contentLoader;
     BoardElementManager board;
     PoolElementManager pool;
-    Dictionary<Player, ScoreIndicatorManager> scoreManagers;
+    // Dictionary<Player, ScoreIndicatorManager> scoreManagers;
+    ScoreIndicatorManager scoreManager;
     TimerHandler timerHandler;
     SpaceshipHandler spaceshipHandler;
     public static Player currentPlayer;
@@ -96,15 +97,9 @@ public class GameManager : MonoBehaviour
         spaceshipHandler.Init(SetupTurnStarted);
         spaceshipHandler.SetActivePlayer(currentPlayer);
 
-        scoreManagers = new();
 
-        ScoreIndicatorManager astronautScore = GameObject.Find("Astronaut/Set Indicators").GetComponent<ScoreIndicatorManager>();
-        astronautScore.Init();
-        scoreManagers[Player.Astronaut] = astronautScore;
-
-        ScoreIndicatorManager alienScore = GameObject.Find("Alien/Set Indicators").GetComponent<ScoreIndicatorManager>();
-        alienScore.Init();
-        scoreManagers[Player.Alien] = alienScore;
+        scoreManager = GameObject.Find("Round Indicators/Indicators").GetComponent<ScoreIndicatorManager>();
+        scoreManager.Init();
 
         timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
 
@@ -134,7 +129,7 @@ public class GameManager : MonoBehaviour
         lastSelectedBoardElement = element;
         
         if(!devMode) CheckForMatch();
-        if(devMode) DevModeWin();
+        // if(devMode) DevModeWin();
     }
 
    void OnPoolElementClick(PoolElement element)
@@ -145,26 +140,26 @@ public class GameManager : MonoBehaviour
         CheckForMatch();
     }
 
-    private void DevModeWin()
-    {
-        lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
-        correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
-        lastSelectedBoardElement.Disable();
-        AnalyticsManager.IncrementScore(currentPlayer);
+    // private void DevModeWin()
+    // {
+    //     lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
+    //     correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
+    //     lastSelectedBoardElement.Disable();
+    //     AnalyticsManager.IncrementScore(currentPlayer);
 
-        if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
-        {
-            scoreManagers[currentPlayer].IncrementScore(currentPlayer.ToOutcome());
-            GameEvents.SetEnded.Invoke();
-        }
+    //     if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
+    //     {
+    //         scoreManagers[currentPlayer].IncrementScore(currentPlayer.ToOutcome());
+    //         GameEvents.SetEnded.Invoke();
+    //     }
 
-        else
-        {
-            GameEvents.TurnEnded.Invoke();
-        }
+    //     else
+    //     {
+    //         GameEvents.TurnEnded.Invoke();
+    //     }
 
-        MoveControlToOtherPlayer();
-    }
+    //     MoveControlToOtherPlayer();
+    // }
 
     void CheckForMatch()
     {
@@ -215,7 +210,7 @@ public class GameManager : MonoBehaviour
 
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
-            scoreManagers[currentPlayer].IncrementScore(currentPlayer.ToOutcome());
+            scoreManager.IncrementPlayerScore(currentPlayer.ToOutcome());
         }
     }
 
@@ -338,7 +333,7 @@ public class GameManager : MonoBehaviour
 
     private bool IsGameWon()
     {
-        return scoreManagers[Player.Astronaut].gameWon || scoreManagers[Player.Alien].gameWon;
+        return scoreManager.gameWon;
     }
 
     private bool IsGameTied()

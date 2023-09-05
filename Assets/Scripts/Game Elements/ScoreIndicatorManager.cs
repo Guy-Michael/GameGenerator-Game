@@ -7,17 +7,24 @@ using UnityEngine.UI;
 
 public class ScoreIndicatorManager : MonoBehaviour
 {
-    [SerializeField] Sprite winSprite;
-    [SerializeField] Sprite tie;
+    [SerializeField] Sprite alienWinSprite;
+    [SerializeField] Sprite astronautWinSprite;
+    [SerializeField] Sprite tieSprite;
     List<Image> setIndicators;
-    Player player;
+    Dictionary<SetOutcome, Sprite> outcomes;
     int currentSet;
     public bool gameWon;
     
     public void Init()
     {
-        player = GetComponentInParent<Character>().player;
         currentSet = 0;
+
+        outcomes = new()
+        {
+            {SetOutcome.AlienWin, alienWinSprite},
+            {SetOutcome.AstronautWin, astronautWinSprite},
+            {SetOutcome.Tie, tieSprite}
+        };
 
         setIndicators = new();
         foreach(Transform child in transform)
@@ -26,17 +33,22 @@ public class ScoreIndicatorManager : MonoBehaviour
         }
     }
 
-    public void IncrementScore(SetOutcome outcome)
+    public void IncrementPlayerScore(SetOutcome outcome)
     {
-        if(outcome == SetOutcome.Tie)
-        {
-            setIndicators[currentSet].sprite = tie;
-        }
+        print(outcomes[outcome]);
+        print(setIndicators[currentSet]);
+        setIndicators[currentSet].sprite = outcomes[outcome];
+        print(outcomes[outcome].name);
 
-        else if(outcome == player.ToOutcome())
-        {
-            setIndicators[currentSet].sprite = winSprite;
-        }
+        // if(outcome == SetOutcome.Tie)
+        // {
+        //     setIndicators[currentSet].sprite = tieSprite;
+        // }
+
+        // else if(outcome == player.ToOutcome())
+        // {
+        //     setIndicators[currentSet].sprite = alienWinSprite;
+        // }
 
         Color color = setIndicators[currentSet].color;
         color.a = 255;
