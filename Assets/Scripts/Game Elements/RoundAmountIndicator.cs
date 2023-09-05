@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,19 +10,21 @@ public class RoundAmountIndicator : MonoBehaviour
 {
     Image background;
     TextMeshProUGUI text;
+    int value;
 
-    void Start()
+    public void Init(Action<int> onSelected)
     {
         background = transform.Find("Button").GetComponent<Image>();
         text = GetComponentInChildren<TextMeshProUGUI>();
         Button button = GetComponentInChildren<Button>();
-        button.onClick.AddListener(() => SetBackground(true));
+        value = int.Parse(text.text);
+        
+        button.onClick.AddListener(() => SetSelected(true));
+        button.onClick.AddListener(() => onSelected(value));
     }
 
-    public void SetBackground(bool selected)
+    public void SetSelected(bool selected)
     {   
-        string message = selected ? "pressed!" : "unpressed!";
-        print(message);
         var backgroundColor = background.color;
 
         backgroundColor.a = selected ? 1 : 0;

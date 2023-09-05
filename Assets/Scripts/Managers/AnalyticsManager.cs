@@ -24,6 +24,7 @@ public static class AnalyticsManager
         }
     }
     public static string gameCode = "100";
+    public static int numberOfRounds;
     public static SetOutcome outcome;
     static AnalyticsManager()
     {
@@ -94,5 +95,8 @@ public static class AnalyticsManager
         analytics[player].moves.Add((sprite, caption, isMoveCorrect));
     }
 
-
+    public static void SetNumberOfRounds(int amount)
+    {
+        numberOfRounds = amount;
+    }
 }
