@@ -10,7 +10,7 @@ public class ScoreIndicatorManager : MonoBehaviour
     [SerializeField] Sprite alienWinSprite;
     [SerializeField] Sprite astronautWinSprite;
     [SerializeField] Sprite tieSprite;
-    List<Image> setIndicators;
+    List<(Image image, Image background)> setIndicators;
     Dictionary<SetOutcome, Sprite> outcomes;
     int currentSet;
     public bool gameWon;
@@ -29,30 +29,21 @@ public class ScoreIndicatorManager : MonoBehaviour
         setIndicators = new();
         foreach(Transform child in transform)
         {
-            setIndicators.Add(child.transform.Find("Image").GetComponent<Image>());
+            setIndicators.Add((child.transform.Find("Image").GetComponent<Image>(), child.transform.Find("Background").GetComponent<Image>()));
         }
     }
 
     public void IncrementPlayerScore(SetOutcome outcome)
     {
-        print(outcomes[outcome]);
-        print(setIndicators[currentSet]);
-        setIndicators[currentSet].sprite = outcomes[outcome];
-        print(outcomes[outcome].name);
+        setIndicators[currentSet].image.sprite = outcomes[outcome];
 
-        // if(outcome == SetOutcome.Tie)
-        // {
-        //     setIndicators[currentSet].sprite = tieSprite;
-        // }
-
-        // else if(outcome == player.ToOutcome())
-        // {
-        //     setIndicators[currentSet].sprite = alienWinSprite;
-        // }
-
-        Color color = setIndicators[currentSet].color;
+        Color color = setIndicators[currentSet].image.color;
         color.a = 255;
-        setIndicators[currentSet].color = color;
+        setIndicators[currentSet].image.color = color;
+
+        Color colorBackground = setIndicators[currentSet].background.color;
+        colorBackground.a = 255;
+        setIndicators[currentSet].background.color = colorBackground;
 
         currentSet++;
 
