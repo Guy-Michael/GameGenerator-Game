@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using UnityEngine;
 
 public struct PlayerAnalytics
@@ -28,22 +29,28 @@ public static class AnalyticsManager
     public static SetOutcome outcome;
     static AnalyticsManager()
     {
-        analytics = new();
-        ResetGameAnalytics();
+        analytics = new()
+        {
+            {
+                Player.Alien, 
+                new PlayerAnalytics()
+                {
+                    name = TextConsts.defaultPlayerNames[Player.Alien],
+                    moves = new()
+                }
+            },
+            {
+                Player.Astronaut, 
+                new PlayerAnalytics()
+                {
+                    name = TextConsts.defaultPlayerNames[Player.Astronaut],
+                    moves = new()
+                }
+            }
+        };
         SetPlayerName(Player.Astronaut, TextConsts.defaultPlayerNames[Player.Astronaut]);
         SetPlayerName(Player.Alien, TextConsts.defaultPlayerNames[Player.Alien]);
-    }
-
-    public static void ResetGameAnalytics()
-    {
-        PlayerAnalytics temp = new();
-        temp.moves = new();
-
-        analytics.Clear();
-        analytics.Add(Player.Astronaut, temp);
-
-        temp.moves = new();
-        analytics.Add(Player.Alien, temp);
+        SetNumberOfRounds(1);
     }
 
     public static void IncrementNumberOfMistakes(Player player)

@@ -66,6 +66,12 @@ public static class GameUtils
         return false;
     }
 
+    public static bool IsSetTied(Dictionary<Player, List<int>> movesMadeInSet)
+    {
+        int astronautMoves = movesMadeInSet[Player.Astronaut].Count();
+        int alienMoves = movesMadeInSet[Player.Alien].Count();
+        return astronautMoves + alienMoves >= 9;
+    }
     public static (int, int, int)[] GetWinningTriplets()
     {
         (int a, int b, int c)[] winningTriplets = new (int, int, int)[]

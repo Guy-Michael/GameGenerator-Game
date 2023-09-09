@@ -17,7 +17,6 @@ public class VisualFeedback : MonoBehaviour
         SetOutcome outcome = AnalyticsManager.outcome;
         string outcomeCaption = string.Empty;
         Sprite outcomeSprite = null;
-
         switch(outcome)
         {
             case SetOutcome.AlienWin:
