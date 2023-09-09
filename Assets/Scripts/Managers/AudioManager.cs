@@ -11,7 +11,7 @@ public class AudioManager : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        GameEvents.PlayerGotMatch.AddListener(PlaySuccessSound);
+        GameEvents.PlayerMadeMatch.AddListener(PlaySuccessSound);
         GameEvents.PlayerFailedMatch.AddListener(PlayFailureSound);
     }
 

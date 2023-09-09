@@ -7,7 +7,6 @@ using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] bool devMode;
     [SerializeField] bool shouldRandomizePool;
     [SerializeField] bool shouldRandomizeBoardOnSetEnd;
 
@@ -15,7 +14,7 @@ public class GameManager : MonoBehaviour
     GameLoader contentLoader;
     BoardElementManager board;
     PoolElementManager pool;
-    Dictionary<Player, ScoreIndicatorManager> scoreManagers;
+    RoundsManager scoreManager;
     TimerHandler timerHandler;
     SpaceshipHandler spaceshipHandler;
     public static Player currentPlayer;
@@ -30,12 +29,21 @@ public class GameManager : MonoBehaviour
         InitIntroScreen();
     }
 
-    void Update()
+    async void Update()
     {
         if(Input.GetKeyDown(KeyCode.I))
         {
-            AnalyticsManager.outcome = SetOutcome.Tie;
-            SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
+            await GameEvents.GameEnded.Invoke(SetOutcome.Tie);
+        }
+
+        if(Input.GetKeyDown(KeyCode.A))
+        {
+            await GameEvents.GameEnded.Invoke(SetOutcome.AstronautWin);
+        }
+
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            await GameEvents.GameEnded.Invoke(SetOutcome.AlienWin);
         }
     }
 
@@ -64,7 +72,6 @@ public class GameManager : MonoBehaviour
     {
         firstPlayerScreen.SetActive(false);
         gameScreen.SetActive(true);
-        AnalyticsManager.ResetGameAnalytics();
         InitializeMoves();
         InitializeGameElements();
         InitializeGameTheme();
@@ -96,15 +103,9 @@ public class GameManager : MonoBehaviour
         spaceshipHandler.Init(SetupTurnStarted);
         spaceshipHandler.SetActivePlayer(currentPlayer);
 
-        scoreManagers = new();
 
-        ScoreIndicatorManager astronautScore = GameObject.Find("Astronaut/Set Indicators").GetComponent<ScoreIndicatorManager>();
-        astronautScore.Init();
-        scoreManagers[Player.Astronaut] = astronautScore;
-
-        ScoreIndicatorManager alienScore = GameObject.Find("Alien/Set Indicators").GetComponent<ScoreIndicatorManager>();
-        alienScore.Init();
-        scoreManagers[Player.Alien] = alienScore;
+        scoreManager = GameObject.Find("Round Indicators/Indicators").GetComponent<RoundsManager>();
+        scoreManager.Init();
 
         timerHandler = GameObject.Find("Timer").GetComponent<TimerHandler>();
 
@@ -114,7 +115,7 @@ public class GameManager : MonoBehaviour
 
     private void AddEventListeners()
     {
-        GameEvents.PlayerGotMatch.AddListener(OnPlayerGotMatch);
+        GameEvents.PlayerMadeMatch.AddListener(OnPlayerGotMatch);
         GameEvents.PlayerFailedMatch.AddListener(OnPlayerFailedMatch);
         GameEvents.TurnEnded.AddListener(OnTurnEnded);
         GameEvents.GameEnded.AddAsyncListener(OnGameEnded);
@@ -132,9 +133,7 @@ public class GameManager : MonoBehaviour
     {
         lastSelectedBoardElement?.SetBorderColorSelected(false);
         lastSelectedBoardElement = element;
-        
-        if(!devMode) CheckForMatch();
-        if(devMode) DevModeWin();
+        CheckForMatch();
     }
 
    void OnPoolElementClick(PoolElement element)
@@ -143,27 +142,6 @@ public class GameManager : MonoBehaviour
 
         lastSelectedPoolElement = element;
         CheckForMatch();
-    }
-
-    private void DevModeWin()
-    {
-        lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
-        correctMovesMadeInCurrentSet[currentPlayer].Add(lastSelectedBoardElement.transform.GetSiblingIndex());
-        lastSelectedBoardElement.Disable();
-        AnalyticsManager.IncrementScore(currentPlayer);
-
-        if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
-        {
-            scoreManagers[currentPlayer].IncrementScore(currentPlayer.ToOutcome());
-            GameEvents.SetEnded.Invoke();
-        }
-
-        else
-        {
-            GameEvents.TurnEnded.Invoke();
-        }
-
-        MoveControlToOtherPlayer();
     }
 
     void CheckForMatch()
@@ -179,7 +157,7 @@ public class GameManager : MonoBehaviour
         if(poolMatchingContent.Equals(boardMatchingContent))
         {
             hasJustMadeCorrectMatch = true;
-            GameEvents.PlayerGotMatch.Invoke();
+            GameEvents.PlayerMadeMatch.Invoke();
         }
 
         else
@@ -190,7 +168,8 @@ public class GameManager : MonoBehaviour
         AnalyticsManager.RecordMove(currentPlayer, poolMatchingContent, lastSelectedBoardElement.themeSprite, hasJustMadeCorrectMatch);
         AnalyticsManager.IncrementPlaytime(currentPlayer);
 
-        if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]) || IsGameTied())
+        bool hasSetConcluded = GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]) || GameUtils.IsSetTied(correctMovesMadeInCurrentSet);
+        if(hasSetConcluded)
         {
             GameEvents.SetEnded.Invoke();
         }
@@ -215,7 +194,12 @@ public class GameManager : MonoBehaviour
 
         if(GameUtils.HasWonSet(correctMovesMadeInCurrentSet[currentPlayer]))
         {
-            scoreManagers[currentPlayer].IncrementScore(currentPlayer.ToOutcome());
+            scoreManager.IncrementPlayerScore(currentPlayer.ToOutcome());
+        }
+
+        if(GameUtils.IsSetTied(correctMovesMadeInCurrentSet))
+        {
+            scoreManager.IncrementPlayerScore(SetOutcome.Tie);
         }
     }
 
@@ -230,16 +214,12 @@ public class GameManager : MonoBehaviour
 
     private void OnSetEnded()
     {
-        if(!IsGameTied())
+        if(!GameUtils.IsSetTied(correctMovesMadeInCurrentSet))
         {
             spaceshipHandler.DisplayWonRoundMessage();
             (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
             GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
             lastSelectedBoardElement.SetPlayerThumbnail(currentPlayer);
-        }
-        
-        else
-        {
         }
 
         hasSetJustEnded = true;
@@ -296,12 +276,6 @@ public class GameManager : MonoBehaviour
     private async void SetupTurnEnded(bool elementsEnabled)
     {
         board.SetElementsEnabled(elementsEnabled);
-        
-        if(IsGameWon()/* || IsGameTied() */)
-        {
-            await GameEvents.GameEnded.Invoke();
-            return;
-        }
 
         spaceshipHandler.SetContinueButtonVisible(true);
         SetControlsEnabled(false);
@@ -327,24 +301,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private async Task OnGameEnded()
+    private async Task OnGameEnded(SetOutcome outcome)
     {
         timerHandler.HideTimer();
-        AnalyticsManager.outcome = /*IsGameTied() ? SetOutcome.Tie :*/ currentPlayer.ToOutcome();
+        AnalyticsManager.outcome = outcome;
         GameEvents.RemoveAllListeners();
         await Task.Delay(3000);
         SceneTransitionManager.MoveToScene(SceneNames.FeedbackScreen);
-    }
-
-    private bool IsGameWon()
-    {
-        return scoreManagers[Player.Astronaut].gameWon || scoreManagers[Player.Alien].gameWon;
-    }
-
-    private bool IsGameTied()
-    {
-        int astronautMoves = correctMovesMadeInCurrentSet[Player.Astronaut].Count();
-        int alienMoves = correctMovesMadeInCurrentSet[Player.Alien].Count();
-        return astronautMoves + alienMoves >= 9;
     }
 }

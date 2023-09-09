@@ -1,3 +1,4 @@
+using System.Globalization;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -7,18 +8,18 @@ using UnityEngine;
 
 public static class GameEvents
 {
-    public static UnityEvent PlayerGotMatch = new();
+    public static UnityEvent PlayerMadeMatch = new();
     public static UnityEvent PlayerFailedMatch = new();
     public static UnityEvent TurnEnded = new();
     public static UnityEvent GameStarted = new();
     public static UnityEvent<string> GameTypeSelected = new();
     public static UnityEvent SetEnded = new();
     public static UnityEvent SetWon = new();
-    public static UnityEventAsync GameEnded = new();
+    public static UnityEventAsync<SetOutcome> GameEnded = new();
 
     public static void RemoveAllListeners()
     {
-        PlayerGotMatch.RemoveAllListeners();
+        PlayerMadeMatch.RemoveAllListeners();
         PlayerFailedMatch.RemoveAllListeners();
         TurnEnded.RemoveAllListeners();
         GameStarted.RemoveAllListeners();
@@ -32,7 +33,7 @@ public static class GameEvents
 
 public class UnityEventAsync: UnityEvent
 {
-    List<Func<Task>> asyncListeners;
+    protected List<Func<Task>> asyncListeners;
     
     public UnityEventAsync() : base()
     {
@@ -44,7 +45,7 @@ public class UnityEventAsync: UnityEvent
         asyncListeners.Add(asyncCallback);
     }
     
-    public new async Task Invoke()
+    public async Task InvokeAsync()
     {
         Task[] tasks = new Task[asyncListeners.Count];
         for(int i = 0; i < asyncListeners.Count; i++)
@@ -62,32 +63,62 @@ public class UnityEventAsync: UnityEvent
     }
 }
 
-public class UnityEventAsync<T> : UnityEvent<T>
+public class UnityEventAsync<T> : UnityEventAsync
 {
-    List<Func<T, Task>> asyncListeners;
+    protected new List<Func<T, Task>> asyncListeners;
 
     public UnityEventAsync() : base()
     {
-        asyncListeners = new();
+        this.asyncListeners = new();
     }
-
-    public void AddAsyncListener(Func<T, Task> asyncCallback)
+    public void AddAsyncListener(Func<T, Task> listener)
     {
-        asyncListeners.Add(asyncCallback);
+        asyncListeners.Add(listener);
     }
-    
-    public new void Invoke(T arg)
+    public async Task Invoke(T arg)
     {
-
-        base.Invoke(arg);
-
         Task[] tasks = new Task[asyncListeners.Count];
+        var listener = asyncListeners[0];
         for(int i = 0; i < asyncListeners.Count; i++)
         {
-            Task task = asyncListeners[i](arg);
+            Task task = asyncListeners[i].Invoke(arg);
             tasks[i] = task;
         }
 
-        Task.WaitAll(tasks);
+        await Task.WhenAll(tasks);
+
+        base.Invoke();
     }
 }
+
+
+
+// public class UnityEventAsync<T> : UnityEventAsync
+// {
+//     List<Func<T, Task>> asyncListeners;
+
+//     public UnityEventAsync() : base()
+//     {
+//         asyncListeners = new();
+//     }
+
+//     public void AddAsyncListener(Func<T, Task> asyncCallback)
+//     {
+//         asyncListeners.Add(asyncCallback);
+//     }
+    
+//     public void Invoke(T arg)
+//     {
+
+//         Invoke(arg);
+
+//         Task[] tasks = new Task[asyncListeners.Count];
+//         for(int i = 0; i < asyncListeners.Count; i++)
+//         {
+//             Task task = asyncListeners[i](arg);
+//             tasks[i] = task;
+//         }
+
+//         Task.WaitAll(tasks);
+//     }
+// }
