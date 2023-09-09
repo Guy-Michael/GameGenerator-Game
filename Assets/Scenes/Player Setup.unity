@@ -279,7 +279,8 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SetSelected
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 407298300160067013, guid: 79f3a00441ff8ec49a2b82fde4dda3d1, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 79f3a00441ff8ec49a2b82fde4dda3d1, type: 3}
 --- !u!114 &421618731 stripped
 MonoBehaviour:
@@ -810,24 +811,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 1701316339227078719}
     m_Modifications:
     - target: {fileID: 1670955610, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1670955610, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -107
-      objectReference: {fileID: 0}
-    - target: {fileID: 1978142783, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
-      propertyPath: m_text
-      value: "\u05D4\u05DB\u05E0\u05E1/\u05D9 \u05E9\u05DD.."
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 359126762718301395, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -58
-      objectReference: {fileID: 0}
-    - target: {fileID: 5361706157893114205, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
-      propertyPath: m_text
-      value: "\u05E9\u05D7\u05E7\u05E0/\u05D9\u05EA 2"
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 7285587385316838651, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_Pivot.x
@@ -899,7 +888,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7285587385316838651, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 122
+      value: -27
       objectReference: {fileID: 0}
     - target: {fileID: 7285587385316838651, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1141,7 +1130,8 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SetSelected
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 407298300160067013, guid: 79f3a00441ff8ec49a2b82fde4dda3d1, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 79f3a00441ff8ec49a2b82fde4dda3d1, type: 3}
 --- !u!1001 &1380943558
 PrefabInstance:
@@ -1640,7 +1630,8 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SetSelected
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 407298300160067013, guid: 79f3a00441ff8ec49a2b82fde4dda3d1, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 79f3a00441ff8ec49a2b82fde4dda3d1, type: 3}
 --- !u!222 &1701316338727981384
 CanvasRenderer:
@@ -2019,24 +2010,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 1701316339227078719}
     m_Modifications:
     - target: {fileID: 1670955610, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1670955610, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -107
-      objectReference: {fileID: 0}
-    - target: {fileID: 1978142783, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
-      propertyPath: m_text
-      value: "\u05D4\u05DB\u05E0\u05E1/\u05D9 \u05E9\u05DD.."
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 359126762718301395, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -58
+      value: 112.00001
       objectReference: {fileID: 0}
     - target: {fileID: 5361706157893114205, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_text
-      value: "\u05E9\u05D7\u05E7\u05E0/\u05D9\u05EA 1"
+      value: "\u05E9\u05D7\u05E7\u05E0\\\u05D9\u05EA 1"
       objectReference: {fileID: 0}
     - target: {fileID: 7285587385316838651, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_Pivot.x
@@ -2108,7 +2091,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7285587385316838651, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 122
+      value: -27
       objectReference: {fileID: 0}
     - target: {fileID: 7285587385316838651, guid: e790ea8eb31f59048afb073fa36cdb9e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
