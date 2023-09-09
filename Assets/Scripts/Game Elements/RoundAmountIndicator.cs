@@ -7,17 +7,16 @@ public class RoundAmountIndicator : MonoBehaviour
 {
     Image background;
     TextMeshProUGUI text;
-    int value;
+    public int value;
 
-    public void Init(Action<int> onSelected)
+    public void Init(Action<RoundAmountIndicator> onSelected)
     {
         background = transform.Find("Button").GetComponent<Image>();
         text = GetComponentInChildren<TextMeshProUGUI>();
         Button button = GetComponentInChildren<Button>();
         value = int.Parse(text.text);
         
-        button.onClick.AddListener(() => SetSelected(true));
-        button.onClick.AddListener(() => onSelected(value));
+        button.onClick.AddListener(() => onSelected(this));
     }
 
     public void SetSelected(bool selected)

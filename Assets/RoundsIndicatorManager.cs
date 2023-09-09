@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RoundsIndicatorManager : MonoBehaviour
 {
+    RoundAmountIndicator currentIndicator;
     public int currentNumberOfRounds;
     void Start()
     {
@@ -15,9 +16,19 @@ public class RoundsIndicatorManager : MonoBehaviour
         }        
     }
 
-    private void OnIndicatorSelected(int amount)
+    private void OnIndicatorSelected(RoundAmountIndicator indicator)
     {
-        currentNumberOfRounds = amount;
+        if(indicator == currentIndicator)
+        {
+            return;
+        }
+
+        currentIndicator?.SetSelected(false);
+        
+        currentIndicator = indicator;
+        currentIndicator.SetSelected(true);
+        currentNumberOfRounds = indicator.value;
+
     }
 
 }
