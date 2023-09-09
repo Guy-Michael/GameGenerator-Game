@@ -8,6 +8,8 @@ using System.Collections;
 public class PoolElementManager : MonoBehaviour
 {
     PoolElement[] gameElements;
+    GridLayoutGroup layoutGroup;
+
     public PoolElement this[int index]
     {
         get => (index >= 0) && index < gameElements.Length ? gameElements[index] : null;
@@ -15,6 +17,7 @@ public class PoolElementManager : MonoBehaviour
 
     public void InitElements(Action<PoolElement> onClickCallback)
     {
+        layoutGroup = GetComponent<GridLayoutGroup>();
         gameElements = GetComponentsInChildren<PoolElement>();
 
         foreach(PoolElement element in gameElements)
@@ -47,7 +50,7 @@ public class PoolElementManager : MonoBehaviour
     public void Shuffle()
     {
         IEnumerable<int> indecies = Enumerable.Range(0, gameElements.Length).OrderBy(s => UnityEngine.Random.value);
-        GetComponent<GridLayoutGroup>().enabled = true;
+        layoutGroup.enabled = true;
         for(int i = 0 ; i < gameElements.Length; i++)
         {
             gameElements[i].transform.SetSiblingIndex(indecies.ElementAt(i));
@@ -58,7 +61,7 @@ public class PoolElementManager : MonoBehaviour
         IEnumerator TurnOfGridLayout()
         {
             yield return null;
-            GetComponent<GridLayoutGroup>().enabled = false;
+            layoutGroup.enabled = false;
         }
     }
 
