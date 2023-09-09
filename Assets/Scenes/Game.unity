@@ -976,10 +976,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Element 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7371237358281163867, guid: da14fb7e6e52a534fa2f387e756dcf12, type: 3}
-      propertyPath: m_Layer
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 8801062589725810676, guid: da14fb7e6e52a534fa2f387e756dcf12, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4116,6 +4112,26 @@ PrefabInstance:
     - target: {fileID: 7371237358281163867, guid: d392e44004b623d4c9ee7f8ad5e5031b, type: 3}
       propertyPath: m_Name
       value: Pool Element1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8643337269986474102, guid: d392e44004b623d4c9ee7f8ad5e5031b, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8643337269986474102, guid: d392e44004b623d4c9ee7f8ad5e5031b, type: 3}
+      propertyPath: m_fontSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8643337269986474102, guid: d392e44004b623d4c9ee7f8ad5e5031b, type: 3}
+      propertyPath: m_margin.w
+      value: -0.5469591
+      objectReference: {fileID: 0}
+    - target: {fileID: 8643337269986474102, guid: d392e44004b623d4c9ee7f8ad5e5031b, type: 3}
+      propertyPath: m_margin.y
+      value: 0.46910858
+      objectReference: {fileID: 0}
+    - target: {fileID: 8643337269986474102, guid: d392e44004b623d4c9ee7f8ad5e5031b, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8801062589725810676, guid: d392e44004b623d4c9ee7f8ad5e5031b, type: 3}
       propertyPath: m_Pivot.x
