@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 public class EndScreenMatchManager : MonoBehaviour
 {
@@ -9,6 +10,11 @@ public class EndScreenMatchManager : MonoBehaviour
     
     void Start()
     {
+        string playerName = AnalyticsManager.analytics[player].name;
+        string title = TextConsts.GameFeedbackText.GeneratePlayerMatchesCaption(playerName);
+        TextMeshProUGUI playerCaption = transform.Find("Caption").GetComponent<TextMeshProUGUI>();
+        playerCaption.text = title;
+
         var matchList = AnalyticsManager.analytics[player].moves;
         var correctMatches = matchList.Where(match => match.isCorrect);
         var wrongMatches = matchList.Where(match => !match.isCorrect);

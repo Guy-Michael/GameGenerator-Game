@@ -673,9 +673,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u05D4\u05D4\u05EA\u05D0\u05DE\u05D5\u05EA \u05E9\u05DC \u05E9\u05D7\u05E7\u05DF
-    1"
-  m_isRightToLeft: 1
+  m_text: Player 1 matches
+  m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
@@ -2106,9 +2105,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u05D4\u05D4\u05EA\u05D0\u05DE\u05D5\u05EA \u05E9\u05DC \u05E9\u05D7\u05E7\u05DF
-    2"
-  m_isRightToLeft: 1
+  m_text: Player 2 matches
+  m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
@@ -2260,18 +2258,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1917327929}
   m_CullTransparentMesh: 1
---- !u!114 &2001169000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1102877138396239899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64862b7083099764c8f4d064afdd2971, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2102802762
 GameObject:
   m_ObjectHideFlags: 0
@@ -2730,7 +2716,6 @@ GameObject:
   - component: {fileID: 1102877138396239903}
   - component: {fileID: 1102877138396239896}
   - component: {fileID: 1102877138396239897}
-  - component: {fileID: 2001169000}
   - component: {fileID: 1102877138396239904}
   m_Layer: 5
   m_Name: Exit Button
