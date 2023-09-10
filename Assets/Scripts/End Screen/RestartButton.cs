@@ -8,6 +8,6 @@ public class RestartButton : MonoBehaviour
     void Start()
     {
         Button button = GetComponent<Button>();
-        button.onClick.AddListener(()=>SceneTransitionManager.MoveToScene(SceneNames.Game));
+        button.onClick.AddListener(()=>SceneTransitionManager.MoveToScene(SceneNames.PlayerSetup));
     }
 }

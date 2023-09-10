@@ -8,6 +8,7 @@ public class ExitButton : MonoBehaviour
     void Start()
     {
         Button b = GetComponent<Button>();
-        b.onClick.AddListener(Application.Quit);
+        b.onClick.AddListener(() => SceneTransitionManager.MoveToScene(SceneNames.MainMenu));
+
     }
 }

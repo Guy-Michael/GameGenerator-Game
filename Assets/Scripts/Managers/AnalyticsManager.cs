@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Printing;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 
 public struct PlayerAnalytics
@@ -28,6 +29,11 @@ public static class AnalyticsManager
     public static int numberOfRounds;
     public static SetOutcome outcome;
     static AnalyticsManager()
+    {
+        Reset();
+    }
+
+    public static void Reset()
     {
         analytics = new()
         {

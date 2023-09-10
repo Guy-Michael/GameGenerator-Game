@@ -30,6 +30,11 @@ public static class TextConsts
                     + "\n".Reverse()
                     + "בהצלחה בדרך הביתה".Reverse();
         }
+
+        public static string GeneratePlayerMatchesCaption(string name)
+        {
+            return $"ההתאמות של {name}".Reverse();
+        }
     }
 
     static TextConsts()

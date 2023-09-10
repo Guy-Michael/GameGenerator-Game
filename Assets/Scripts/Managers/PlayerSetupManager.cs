@@ -13,6 +13,7 @@ public class PlayerSetupManager : MonoBehaviour
     RoundsIndicatorManager roundAmountManager;
     void Start()
     {
+        AnalyticsManager.Reset();
         validator = startButton.GetComponent<InputValidator>();
         roundAmountManager = GameObject.Find("Rounds Container").GetComponent<RoundsIndicatorManager>();
         startButton.onClick.AddListener(OnGameStart); 
