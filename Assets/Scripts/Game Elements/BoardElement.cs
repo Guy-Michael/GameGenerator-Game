@@ -129,6 +129,9 @@ public class BoardElement : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if(!button.interactable)
+        return;
+        
         var rect = GetComponent<RectTransform>();
         rect.localScale *= 1.2f;
     }
