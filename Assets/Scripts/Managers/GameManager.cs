@@ -154,6 +154,7 @@ public class GameManager : MonoBehaviour
         string poolMatchingContent = lastSelectedPoolElement.MatchingContent;
         string boardMatchingContent = lastSelectedBoardElement.MatchingContent;
         hasJustMadeCorrectMatch = false;
+
         if(poolMatchingContent.Equals(boardMatchingContent))
         {
             hasJustMadeCorrectMatch = true;
@@ -303,6 +304,8 @@ public class GameManager : MonoBehaviour
     private async Task OnGameEnded(SetOutcome outcome)
     {
         timerHandler.HideTimer();
+        (int a, int b, int c) winningTriplet = GameUtils.GetWinningTriplet(correctMovesMadeInCurrentSet[currentPlayer]);
+        GameUtils.DrawLineRendererOnWinningTriplet(board, winningTriplet);
         AnalyticsManager.outcome = outcome;
         GameEvents.RemoveAllListeners();
         await Task.Delay(3000);
